@@ -1,0 +1,27 @@
+<form [formGroup]="xmlJsonRptForm" (ngSubmit)="submit(xmlJsonRptForm)">
+  <div class="modal-content">
+    <app-custom-modal-header
+      [modalTitle]="data.title"
+    >
+    </app-custom-modal-header>
+
+    <div class="modal-body">
+      <div class="row">
+        <div class="col-md-12">
+         {{data.content}}
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer d-flex justify-content-center">
+      <button
+        type="button"
+        (click)="onNoClick()"
+        class="btn btn-secondary"
+        data-dismiss="modal"
+      >
+        Cancel
+      </button>
+      <button type="submit" class="btn btn-primary" (click)="onNoClick()">OK</button>
+    </div>
+  </div>
+</form>

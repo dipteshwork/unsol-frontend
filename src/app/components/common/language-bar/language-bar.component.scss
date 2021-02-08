@@ -1,0 +1,32 @@
+@import "../../../../styles/variables.scss";
+
+.lang-bar {
+  display: flex;
+  justify-content: space-around;
+  border-radius: 5px;
+  border: 1px solid #e1e1e1;
+
+  & > a.lang-item {
+    cursor: pointer;
+    background-color: $white;
+    color: $text-dark-40;
+    border-right: 1px solid #e1e1e1;
+    padding: 0px 5px;
+    flex-grow: 1;
+    text-align: center;
+
+    &.active {
+      color: $white;
+      background-color: $text-primary;
+    }
+    &:first-child {
+      border-top-left-radius: 5px;
+      border-bottom-left-radius: 5px;
+    }
+    &:last-child {
+      border-top-right-radius: 5px;
+      border-bottom-right-radius: 5px;
+      border-right: 0;
+    }
+  }
+}

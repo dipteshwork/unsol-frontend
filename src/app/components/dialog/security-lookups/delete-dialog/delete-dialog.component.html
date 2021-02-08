@@ -1,0 +1,25 @@
+<div class="modal-content">
+  <app-custom-modal-header
+    [modalTitle]="[data.title]"
+    [appLang]="curLang.toLowerCase()"
+  >
+  </app-custom-modal-header>
+
+  <div class="modal-body">
+    <div class="text-center">
+      <h3>Are you sure to delete this {{ type }}?</h3>
+    </div>
+  </div>
+  <div class="modal-footer d-flex justify-content-center" [ngClass]="curLang === 'AR' && 'rtl'">
+    <button
+      type="button"
+      (click)="handleClick()"
+      class="btn btn-secondary"
+      data-dismiss="modal"
+    >
+      No
+    </button>
+    <button class="btn btn-primary" (click)="delete()">Yes</button>
+  </div>
+</div>
+

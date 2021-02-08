@@ -1,0 +1,20 @@
+.text-danger {
+  color: red;
+  margin-bottom: 0.7rem;
+}
+.mat-form-field-infix {
+  padding: 8px 6px !important;
+}
+.mat-select.rtl {
+  direction: rtl;
+  text-align: right;
+}
+.mat-option.rtl {
+  text-align: right;
+}
+.modal-footer.rtl {
+  flex-direction: row-reverse;
+  .btn-secondary {
+    margin: 0 0 0 42px;
+  }
+}

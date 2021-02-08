@@ -1,0 +1,743 @@
+<div *ngIf="sancStatus == 'SUBMIT4REVIEW'">
+  <div *ngIf="!isEditMode; then makeEditable; else nonEditable"></div>
+  <ng-template #nonEditable>
+    <button
+      type="button"
+      [disabled]="isLoading"
+      class="btn bg-transparent navbar-brand"
+      (click)="makeFormNonEditable('Save')"
+    >
+      <i class="far fa-pause-circle"></i
+      ><span class="pl-2">{{ getTranslation('Save') }}</span>
+    </button>
+    <button
+      type="button"
+      [disabled]="isLoading"
+      (click)="makeFormNonEditable('SaveClose')"
+      class="btn bg-transparent navbar-brand"
+    >
+      <i class="far fa-share-square"></i
+      ><span class="pl-2">{{ getTranslation('Save and Close') }}</span>
+    </button>
+    <button
+      type="button"
+      (click)="makeFormNonEditable('Cancel')"
+      class="btn bg-transparent navbar-brand"
+    >
+      <i class="far fa-share-square"></i
+      ><span class="pl-2">{{ getTranslation('Cancel') }}</span>
+    </button>
+  </ng-template>
+  <ng-template #makeEditable>
+    <span *ngIf="!isFreeTextEditable">
+      <button
+        *ngIf="
+          (userIsSecretary || userIsOfficer) &&
+          !isRemoveWrkFlwLinks &&
+          lang == workingMainLanguage
+        "
+        type="button"
+        class="btn bg-transparent navbar-brand"
+        (click)="openOnholdDialog()"
+      >
+        <i class="far fa-pause-circle"></i
+        ><span class="pl-2">{{ getTranslation('Hold') }}</span>
+      </button>
+      <button
+        type="button"
+        *ngIf="
+          (userIsSecretary || userIsOfficer) && lang == workingMainLanguage
+        "
+        class="btn bg-transparent navbar-brand"
+        (click)="activate()"
+        [disabled]="!canBePublished"
+      >
+        <i class="far fa-share-square"></i
+        ><span class="pl-2">{{ getTranslation('Publish') }}</span>
+      </button>
+      <button
+        *ngIf="
+          (userIsSuperuser || userIsAdministrator) && !isRemoveWrkFlwLinks && lang == workingMainLanguage
+        "
+        type="button"
+        class="btn bg-transparent navbar-brand"
+        (click)="deleteSanction()"
+      >
+        <i class="far fa-trash-alt"></i
+        ><span class="pl-2">{{ getTranslation('Delete') }}</span>
+      </button>
+    </span>
+    <span *ngIf="isFreeTextEditable">
+      <button
+        type="button"
+        class="btn bg-transparent navbar-brand"
+        [disabled]="isLoading"
+        (click)="saveEditedFreeText()"
+      >
+        <i class="far fa-pause-circle"></i
+        ><span class="pl-2">{{ getTranslation('Save') }}</span>
+      </button>
+      <button
+        type="button"
+        [disabled]="isLoading"
+        (click)="makeFormNonEditable('SaveClose')"
+        class="btn bg-transparent navbar-brand"
+      >
+        <i class="far fa-share-square"></i
+        ><span class="pl-2">{{ getTranslation('Save and Close') }}</span>
+      </button>
+      <button
+        type="button"
+        (click)="makeFormNonEditable('Cancel')"
+        class="btn bg-transparent navbar-brand"
+      >
+        <i class="far fa-share-square"></i
+        ><span class="pl-2">{{ getTranslation('Cancel') }}</span>
+      </button>
+    </span>
+    <span>
+      <button
+        type="button"
+        (click)="makeFormEditable()"
+        class="btn bg-transparent navbar-brand"
+        *ngIf="
+          !isFreeTextEditable && lang != workingMainLanguage && userCanTranslate
+        "
+      >
+        <i class="fas fa-edit"></i
+        ><span class="pl-2">{{ getTranslation('Translation') }}</span>
+      </button>
+      <button
+        type="button"
+        (click)="markAsCompleted()"
+        class="btn bg-transparent navbar-brand"
+        *ngIf="
+          userIsOfficer && !isFreeTextEditable && lang != workingMainLanguage
+        "
+        [disabled]="isTranslated"
+      >
+        <i class="fas fa-edit"></i
+        ><span class="pl-2">{{ getTranslation('Mark Completed') }}</span>
+      </button>
+      <button
+        type="button"
+        (click)="reviewTranslation()"
+        class="btn bg-transparent navbar-brand"
+        *ngIf="
+          userIsOfficer && !isFreeTextEditable && lang != workingMainLanguage
+        "
+      >
+        <i class="fas fa-edit"></i
+        ><span class="pl-2">{{ getTranslation('Review Translation') }}</span>
+      </button>
+      <button
+        *ngIf="userIsOfficer && officialLanguages.includes(lang)"
+        class="btn bg-transparent navbar-brand"
+        (click)="downloadTranslatedFile('download')"
+      >
+        <i class="fa fa-language"></i>
+        <span class="pl-2">{{ getTranslation('Translation form') || 'Translation form'}}</span>
+      </button>
+      <button
+        *ngIf="
+          (userIsReadOnly ||
+            userIsOfficer ||
+            userIsSecretary ||
+            userIsSuperuser ||
+            userIsTranslator) &&
+          !isFreeTextEditable
+        "
+        type="button"
+        class="btn bg-transparent navbar-brand"
+        (click)="preview()"
+      >
+        <i class="far fa-eye"></i>
+        <span class="pl-2">{{ getTranslation('Download') || 'Download' }}</span>
+      </button>
+
+      <button
+        *ngIf="userIsReadOnly || userIsOfficer || userIsSuperuser"
+        type="button"
+        (click)="openWrkFlwVersHistDialog()"
+        class="btn bg-transparent navbar-brand"
+      >
+        <i class="fas fa-history"></i>
+        <span class="pl-2">{{ getTranslation('Versions') }}</span>
+      </button>
+    </span>
+  </ng-template>
+</div>
+
+<div *ngIf="sancStatus == 'NEW'">
+  <button
+    type="button"
+    [disabled]="isLoading"
+    (click)="makeFormNonEditable('Save')"
+    class="btn bg-transparent navbar-brand"
+    *ngIf="lang == workingMainLanguage"
+  >
+    <i class="far fa-save"></i
+    ><span class="pl-2">{{ getTranslation('Save') }}</span>
+  </button>
+  <button
+    type="button"
+    [disabled]="isLoading"
+    (click)="makeFormNonEditable('SaveClose')"
+    class="btn bg-transparent navbar-brand"
+    *ngIf="lang == workingMainLanguage"
+  >
+    <i class="far fa-share-square"></i
+    ><span class="pl-2">{{ getTranslation('Save and Close') }}</span>
+  </button>
+  <button
+    type="button"
+    (click)="makeFormNonEditable('Cancel')"
+    class="btn bg-transparent navbar-brand"
+    *ngIf="lang == workingMainLanguage"
+  >
+    <i class="fas fa-times"></i
+    ><span class="pl-2">{{ getTranslation('Cancel') }}</span>
+  </button>
+</div>
+
+<div *ngIf="sancStatus == 'PENDING'">
+  <div *ngIf="!isEditMode; then makeEditable; else nonEditable"></div>
+  <ng-template #nonEditable>
+    <button
+      type="button"
+      [disabled]="isLoading"
+      class="btn bg-transparent navbar-brand"
+      (click)="makeFormNonEditable('Save')"
+    >
+      <i class="far fa-pause-circle"></i
+      ><span class="pl-2">{{ getTranslation('Save') }}</span>
+    </button>
+    <button
+      type="button"
+      [disabled]="isLoading"
+      (click)="makeFormNonEditable('SaveClose')"
+      class="btn bg-transparent navbar-brand"
+    >
+      <i class="far fa-share-square"></i
+      ><span class="pl-2">{{ getTranslation('Save and Close') }}</span>
+    </button>
+    <button
+      type="button"
+      (click)="makeFormNonEditable('Cancel')"
+      class="btn bg-transparent navbar-brand"
+    >
+      <i class="far fa-share-square"></i
+      ><span class="pl-2">{{ getTranslation('Cancel') }}</span>
+    </button>
+  </ng-template>
+  <ng-template #makeEditable>
+    <span *ngIf="isFreeTextEditable">
+      <button
+        type="button"
+        class="btn bg-transparent navbar-brand"
+        [disabled]="isLoading"
+        (click)="makeFormNonEditable('Save')"
+      >
+        <i class="far fa-pause-circle"></i
+        ><span class="pl-2">{{ getTranslation('Save') }}</span>
+      </button>
+      <button
+        type="button"
+        [disabled]="isLoading"
+        (click)="makeFormNonEditable('SaveClose')"
+        class="btn bg-transparent navbar-brand"
+      >
+        <i class="far fa-share-square"></i
+        ><span class="pl-2">{{ getTranslation('Save and Close') }}</span>
+      </button>
+      <button
+        type="button"
+        (click)="makeFormNonEditable('Cancel')"
+        class="btn bg-transparent navbar-brand"
+      >
+        <i class="far fa-share-square"></i
+        ><span class="pl-2">{{ getTranslation('Cancel') }}</span>
+      </button>
+    </span>
+    <span *ngIf="!isFreeTextEditable">
+      <button
+        *ngIf="
+          userIsOfficer && !isRemoveWrkFlwLinks && lang == workingMainLanguage
+        "
+        type="button"
+        (click)="makeFormEditable()"
+        class="btn bg-transparent navbar-brand"
+      >
+        <i class="fas fa-edit"></i
+        ><span class="pl-2">{{ getTranslation('Edit') }}</span>
+      </button>
+      <button
+        *ngIf="
+          userIsOfficer && !isRemoveWrkFlwLinks && lang == workingMainLanguage
+        "
+        type="button"
+        (click)="submitReview()"
+        class="btn bg-transparent navbar-brand"
+      >
+        <i class="far fa-share-square"></i>
+        <span class="pl-2">{{ getTranslation('Submit for Review') }}</span>
+      </button>
+      <button
+        *ngIf="
+          userIsSuperuser && !isRemoveWrkFlwLinks && lang == workingMainLanguage
+        "
+        type="button"
+        class="btn bg-transparent navbar-brand"
+        (click)="deleteSanction()"
+      >
+        <i class="far fa-trash-alt"></i
+        ><span class="pl-2">{{ getTranslation('Delete') }}</span>
+      </button>
+    </span>
+    <span>
+      <button
+        type="button"
+        (click)="makeFormEditable()"
+        class="btn bg-transparent navbar-brand"
+        *ngIf="
+          !isFreeTextEditable && lang != workingMainLanguage && userCanTranslate
+        "
+      >
+        <i class="fas fa-edit"></i>
+        <span class="pl-2">{{ getTranslation('Translation') }}</span>
+      </button>
+      <button
+        type="button"
+        (click)="markAsCompleted()"
+        class="btn bg-transparent navbar-brand"
+        *ngIf="
+          userIsOfficer && !isFreeTextEditable && lang != workingMainLanguage
+        "
+        [disabled]="isTranslated"
+      >
+        <i class="fas fa-edit"></i>
+        <span class="pl-2">{{ getTranslation('Mark Completed') }}</span>
+      </button>
+      <button
+        type="button"
+        (click)="reviewTranslation()"
+        class="btn bg-transparent navbar-brand"
+        *ngIf="
+          userIsOfficer && !isFreeTextEditable && lang != workingMainLanguage
+        "
+      >
+        <i class="fas fa-edit"></i>
+        <span class="pl-2">{{ getTranslation('Review Translation') }}</span>
+      </button>
+    </span>
+    <span>
+      <button
+        *ngIf="userIsOfficer && officialLanguages.includes(lang)"
+        class="btn bg-transparent navbar-brand"
+        (click)="downloadTranslatedFile('download')"
+      >
+        <i class="fa fa-language"></i>
+        <span class="pl-2">{{ getTranslation('Translation form') || 'Translation form'}}</span>
+      </button>
+       <button
+        *ngIf="
+          (userIsReadOnly ||
+            userIsOfficer ||
+            userIsSecretary ||
+            userIsSuperuser ||
+            userIsTranslator) &&
+          !isFreeTextEditable
+        "
+        type="button"
+        class="btn bg-transparent navbar-brand"
+        (click)="preview()"
+      >
+        <i class="far fa-eye"></i>
+        <span class="pl-2">{{ getTranslation('Download') || 'Download' }}</span>
+      </button>
+      <button
+        *ngIf="userIsReadOnly || userIsOfficer || userIsSuperuser"
+        type="button"
+        (click)="openWrkFlwVersHistDialog()"
+        class="btn bg-transparent navbar-brand"
+      >
+        <i class="fas fa-history"></i
+        ><span class="pl-2">{{ getTranslation('Versions') }}</span>
+      </button>
+    </span>
+  </ng-template>
+</div>
+
+<div *ngIf="sancStatus == 'ACTIVE'">
+  <button
+    *ngIf="userIsOfficer && !isRemoveWrkFlwLinks && lang == workingMainLanguage"
+    type="button"
+    class="btn bg-transparent navbar-brand"
+    (click)="reviewAmend()"
+  >
+    <i class="far fa-edit"></i
+    ><span class="pl-2">{{ getTranslation('Amend') }}</span>
+  </button>
+  <button
+    *ngIf="userIsOfficer && !isRemoveWrkFlwLinks && lang == workingMainLanguage"
+    type="button"
+    class="btn bg-transparent navbar-brand"
+    (click)="review()"
+  >
+    <i class="fas fa-tasks"></i
+    ><span class="pl-2">{{ getTranslation('Review') }}</span>
+  </button>
+  <button
+    *ngIf="
+      (userIsOfficer || userIsSecretary) &&
+      !isRemoveWrkFlwLinks &&
+      lang == workingMainLanguage
+    "
+    type="button"
+    class="btn bg-transparent navbar-brand"
+    (click)="delist()"
+  >
+    <i class="fas fa-user-slash"></i
+    ><span class="pl-2">{{ getTranslation('De-list') }}</span>
+  </button>
+  <span>
+    <button
+      type="button"
+      (click)="makeFormEditable()"
+      class="btn bg-transparent navbar-brand"
+      *ngIf="
+        !isFreeTextEditable && lang != workingMainLanguage && userCanTranslate
+      "
+    >
+      <i class="fas fa-edit"></i
+      ><span class="pl-2">{{ getTranslation('Translation') }}</span>
+    </button>
+  </span>
+  <button
+    *ngIf="userIsOfficer && officialLanguages.includes(lang)"
+    class="btn bg-transparent navbar-brand"
+    (click)="downloadTranslatedFile('download')"
+  >
+    <i class="fa fa-language"></i>
+    <span class="pl-2">{{ getTranslation('Translation form') || 'Translation form'}}</span>
+  </button>
+  <button
+    *ngIf="
+      (userIsReadOnly ||
+        userIsOfficer ||
+        userIsSecretary ||
+        userIsSuperuser ||
+        userIsTranslator) &&
+      !isFreeTextEditable
+    "
+    type="button"
+    class="btn bg-transparent navbar-brand"
+    (click)="preview()"
+  >
+    <i class="far fa-eye"></i>
+    <span class="pl-2">{{ getTranslation('Download') || 'Download' }}</span>
+  </button>
+  <button
+    *ngIf="userIsReadOnly || userIsOfficer || userIsSuperuser"
+    type="button"
+    (click)="openWrkFlwVersHistDialog()"
+    class="btn bg-transparent navbar-brand"
+  >
+    <i class="fas fa-history"></i
+    ><span class="pl-2">{{ getTranslation('Versions') }}</span>
+  </button>
+</div>
+
+<div *ngIf="sancStatus == 'DELISTED'">
+  <button
+    [hidden]="sancStatus == 'DELISTED'"
+    *ngIf="(userIsOfficer || userIsSecretary) && lang == workingMainLanguage"
+    type="button"
+    class="btn bg-transparent navbar-brand"
+    (click)="activate()"
+  >
+    <i class="far fa-share-square"></i
+    ><span class="pl-2">{{ getTranslation('Publish') }}</span>
+  </button>
+  <button
+    *ngIf="userIsOfficer && officialLanguages.includes(lang)"
+    class="btn bg-transparent navbar-brand"
+    (click)="downloadTranslatedFile('download')"
+  >
+    <i class="fa fa-language"></i>
+    <span class="pl-2">{{ getTranslation('Translation form') || 'Translation form'}}</span>
+  </button>
+  <button
+    *ngIf="
+      (userIsReadOnly ||
+        userIsOfficer ||
+        userIsSecretary ||
+        userIsSuperuser ||
+        userIsTranslator) &&
+      !isFreeTextEditable
+    "
+    type="button"
+    class="btn bg-transparent navbar-brand"
+    (click)="preview()"
+  >
+    <i class="far fa-eye"></i>
+    <span class="pl-2">{{ getTranslation('Download') || 'Download' }}</span>
+  </button>
+  <button
+    *ngIf="userIsReadOnly || userIsOfficer || userIsSuperuser"
+    type="button"
+    (click)="openWrkFlwVersHistDialog()"
+    class="btn bg-transparent navbar-brand"
+  >
+    <i class="fas fa-history"></i
+    ><span class="pl-2">{{ getTranslation('Versions') }}</span>
+  </button>
+</div>
+
+<div *ngIf="sancStatus == 'ONHOLD'" class="thisiscom">
+  <div *ngIf="!isEditMode; then makeEditable; else nonEditable"></div>
+  <ng-template #nonEditable>
+    <button
+      type="button"
+      class="btn bg-transparent navbar-brand"
+      [disabled]="isLoading"
+      (click)="makeFormNonEditable('Save')"
+    >
+      <i class="far fa-pause-circle"></i
+      ><span class="pl-2">{{ getTranslation('Save') }}</span>
+    </button>
+    <button
+      type="button"
+      [disabled]="isLoading"
+      (click)="makeFormNonEditable('SaveClose')"
+      class="btn bg-transparent navbar-brand"
+    >
+      <i class="far fa-share-square"></i
+      ><span class="pl-2">{{ getTranslation('Save and Close') }}</span>
+    </button>
+    <button
+      type="button"
+      (click)="makeFormNonEditable('Cancel')"
+      class="btn bg-transparent navbar-brand"
+    >
+      <i class="far fa-share-square"></i
+      ><span class="pl-2">{{ getTranslation('Cancel') }}</span>
+    </button>
+  </ng-template>
+  <ng-template #makeEditable>
+    <button
+      *ngIf="(userIsOfficer || userIsSecretary) && lang == workingMainLanguage"
+      type="button"
+      class="btn bg-transparent navbar-brand"
+      (click)="activate()"
+    >
+      <i class="far fa-share-square"></i
+      ><span class="pl-2">{{ getTranslation('Publish') }}</span>
+    </button>
+    <button
+      *ngIf="(userIsSuperuser || userIsAdministrator) && lang == workingMainLanguage"
+      type="button"
+      class="btn bg-transparent navbar-brand"
+      (click)="deleteSanction()"
+    >
+      <i class="far fa-trash-alt"></i
+      ><span class="pl-2">{{ getTranslation('Delete') }}</span>
+    </button>
+    <span>
+      <button
+        type="button"
+        (click)="makeFormEditable()"
+        class="btn bg-transparent navbar-brand"
+        *ngIf="
+          !isFreeTextEditable && lang != workingMainLanguage && userCanTranslate
+        "
+      >
+        <i class="fas fa-edit"></i>
+        <span class="pl-2">{{ getTranslation('Translation') }}</span>
+      </button>
+      <button
+        type="button"
+        (click)="markAsCompleted()"
+        class="btn bg-transparent navbar-brand"
+        *ngIf="
+          userIsOfficer && !isFreeTextEditable && lang != workingMainLanguage
+        "
+        [disabled]="isTranslated"
+      >
+        <i class="fas fa-edit"></i>
+        <span class="pl-2">{{ getTranslation('Mark Completed') }}</span>
+      </button>
+      <button
+        type="button"
+        (click)="reviewTranslation()"
+        class="btn bg-transparent navbar-brand"
+        *ngIf="
+          userIsOfficer && !isFreeTextEditable && lang != workingMainLanguage
+        "
+      >
+        <i class="fas fa-edit"></i>
+        <span class="pl-2">{{ getTranslation('Review Translation') }}</span>
+      </button>
+    </span>
+    <button
+      *ngIf="userIsOfficer && officialLanguages.includes(lang)"
+      class="btn bg-transparent navbar-brand"
+      (click)="downloadTranslatedFile('download')"
+    >
+      <i class="fa fa-language"></i>
+      <span class="pl-2">{{ getTranslation('Translation form') || 'Translation form'}}</span>
+    </button>
+    <button
+      *ngIf="
+        (userIsReadOnly ||
+          userIsOfficer ||
+          userIsSecretary ||
+          userIsSuperuser ||
+          userIsTranslator) &&
+        !isFreeTextEditable
+      "
+      type="button"
+      class="btn bg-transparent navbar-brand"
+      (click)="preview()"
+    >
+      <i class="far fa-eye"></i>
+      <span class="pl-2">{{ getTranslation('Download') || 'Download' }}</span>
+    </button>
+    <button
+      *ngIf="userIsReadOnly || userIsOfficer || userIsSuperuser"
+      type="button"
+      (click)="openWrkFlwVersHistDialog()"
+      class="btn bg-transparent navbar-brand"
+    >
+      <i class="fas fa-history"></i>
+      <span class="pl-2">{{ getTranslation('Versions') }}</span>
+    </button>
+  </ng-template>
+</div>
+
+<div *ngIf="sancStatus == 'ONHOLDEXTENDED'">
+  <button
+    *ngIf="(userIsOfficer || userIsSecretary) && lang == workingMainLanguage"
+    type="button"
+    class="btn bg-transparent navbar-brand"
+    (click)="activate()"
+  >
+    <i class="far fa-share-square"></i
+    ><span class="pl-2">{{ getTranslation('Publish') }}</span>
+  </button>
+  <button
+    type="button"
+    class="btn bg-transparent navbar-brand"
+    (click)="review()"
+    *ngIf="userIsOfficer && lang == workingMainLanguage"
+  >
+    <i class="fas fa-tasks"></i
+    ><span class="pl-2">{{ getTranslation('Review') }}</span>
+  </button>
+  <button
+    *ngIf="(userIsSuperuser || userIsAdministrator) && lang == workingMainLanguage"
+    type="button"
+    class="btn bg-transparent navbar-brand"
+    (click)="deleteSanction()"
+  >
+    <i class="far fa-trash-alt"></i
+    ><span class="pl-2">{{ getTranslation('Delete') }}</span>
+  </button>
+  <span>
+    <button
+      type="button"
+      (click)="makeFormEditable()"
+      class="btn bg-transparent navbar-brand"
+      *ngIf="
+        !isFreeTextEditable && lang != workingMainLanguage && userCanTranslate
+      "
+    >
+      <i class="fas fa-edit"></i>
+      <span class="pl-2">{{ getTranslation('Translation') }}</span>
+    </button>
+    <button
+      type="button"
+      (click)="markAsCompleted()"
+      class="btn bg-transparent navbar-brand"
+      *ngIf="
+        userIsOfficer && !isFreeTextEditable && lang != workingMainLanguage
+      "
+      [disabled]="isTranslated"
+    >
+      <i class="fas fa-edit"></i>
+      <span class="pl-2">{{ getTranslation('Mark Completed') }}</span>
+    </button>
+    <button
+      type="button"
+      (click)="reviewTranslation()"
+      class="btn bg-transparent navbar-brand"
+      *ngIf="
+        userIsOfficer && !isFreeTextEditable && lang != workingMainLanguage
+      "
+    >
+      <i class="fas fa-edit"></i>
+      <span class="pl-2">{{ getTranslation('Review Translation') }}</span>
+    </button>
+  </span>
+  <button
+    *ngIf="userIsOfficer && officialLanguages.includes(lang)"
+    class="btn bg-transparent navbar-brand"
+    (click)="downloadTranslatedFile('download')"
+  >
+    <i class="fa fa-language"></i>
+    <span class="pl-2">{{ getTranslation('Translation form') || 'Translation form'}}</span>
+  </button>
+  <button
+    *ngIf="
+      (userIsReadOnly ||
+        userIsOfficer ||
+        userIsSecretary ||
+        userIsSuperuser ||
+        userIsTranslator) &&
+      !isFreeTextEditable
+    "
+    type="button"
+    class="btn bg-transparent navbar-brand"
+    (click)="preview()"
+  >
+    <i class="far fa-eye"></i>
+    <span class="pl-2">{{ getTranslation('Download') || 'Download' }}</span>
+  </button>
+  <button
+    *ngIf="userIsReadOnly || userIsOfficer || userIsSuperuser"
+    type="button"
+    (click)="openWrkFlwVersHistDialog()"
+    class="btn bg-transparent navbar-brand"
+  >
+    <i class="fas fa-history"></i
+    ><span class="pl-2">{{ getTranslation('Versions') }}</span>
+  </button>
+</div>
+
+<div *ngIf="sancStatus == 'Deleted'">
+  <button
+    type="button"
+    [disabled]="isLoading"
+    class="btn bg-transparent navbar-brand"
+    *ngIf="lang == workingMainLanguage"
+  >
+    <i class="far fa-save"></i
+    ><span class="pl-2">{{ getTranslation('Save') }}</span>
+  </button>
+  <button
+    *ngIf="
+      (userIsReadOnly ||
+        userIsOfficer ||
+        userIsSecretary ||
+        userIsSuperuser ||
+        userIsTranslator) &&
+      !isFreeTextEditable
+    "
+    type="button"
+    class="btn bg-transparent navbar-brand"
+    (click)="preview()"
+  >
+    <i class="far fa-eye"></i>
+    <span class="pl-2">{{ getTranslation('Download') || 'Download' }}</span>
+  </button>
+</div>

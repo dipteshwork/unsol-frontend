@@ -1,0 +1,114 @@
+<form
+  [formGroup]="editMeasuresDialogform"
+  (ngSubmit)="submit(editMeasuresDialogform)"
+>
+  <div class="modal-content">
+    <app-custom-modal-header
+      [modalTitle]="translations[appLang][data.title]"
+      [appLang]="appLang"
+    >
+    </app-custom-modal-header>
+
+    <div class="modal-body">
+      <app-language-bar
+        (childChangeLangEvent)="changeLang($event)"
+        [lang]="lang"
+        [langArr]="langArr"
+      >
+      </app-language-bar>
+      <div class="row mt-3">
+        <div class="col-md-12 p-0">
+
+          <div *ngFor="let curLang of langArr">
+            <mat-form-field
+              [ngClass]="appLang === 'ar' && 'rtl'"
+              *ngIf="curLang.toLowerCase() == lang"
+              appearance="outline"
+              class="col-md-12">
+              <mat-label for="lk_regime_name">{{ translations[appLang]['Regime Name'] || 'Regime Name' }}</mat-label>
+              <input
+                matInput
+                [ngClass]="{'text-right': lang === 'ar'}"
+                formControlName="{{ curLang.toLowerCase() + 'RegimeName' }}"
+                placeholder="{{ translations[appLang]['Please enter Regime Name'] }}"
+                id="{{ curLang + 'regime_name' }}"
+              />
+            </mat-form-field>
+          </div>
+
+          <mat-form-field appearance="outline" class="col-md-12" [ngClass]="appLang === 'ar' && 'rtl'">
+            <mat-label for="measuresPrefix">{{ translations[appLang]['Regime Acronym'] || 'Regime Acronym' }}</mat-label>
+            <input
+              matInput
+              [ngClass]="{'text-right': lang === 'ar'}"
+              formControlName="prefix"
+              placeholder="{{ translations[appLang]['Please enter Regime Acronym'] }}"
+              id="measuresPrefix"
+            />
+          </mat-form-field>
+
+          <div class="row">
+            <div class="col-sm-6">
+              <div
+                class="col-sm-12"
+                *ngIf="editMeasuresDialogform.get('measures') != undefined"
+                formArrayName="measures"
+              >
+                <div>
+                  <label class="w-100">{{ translations[appLang]['Measures'] }}</label>
+                </div>
+                <div class="measure-section">
+                  <div *ngFor="let measure of measuresArr; let i = index">
+                    <mat-checkbox
+                      class="checkbox-margin"
+                      [disabled]="!measure['EN']['isActive']"
+                      [checked]="getMeasureChecked(measure['EN'].measureNm)"
+                      (change)="measure['EN']['isActive'] && updateChkbxArray(measure['EN'].measureNm, $event.checked)"
+                      color="primary"
+                    >
+                      <span [ngClass]="{'color-lightGrey': !measure['EN']['isActive']}">{{ measure[appLang.toUpperCase()].measureNm }}</span>
+                      &nbsp;<i [ngClass]="{'d-none': measure['EN']['isActive']}" matTooltip="Inactive" [matTooltipPosition]="'above'" class="fas fa-exclamation-circle"></i>
+                    </mat-checkbox>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-sm-6">
+              <div class="col-sm-12 measures-status d-flex flex-column">
+                <div>
+                  <label class="w-100">{{ translations[appLang]['Status'] }}</label>
+                </div>
+                <div>
+                  <mat-checkbox
+                    id="measuresStatus"
+                    class="checkbox-margin"
+                    formControlName="isActive"
+                    (change)="updateActiveStatus($event.checked)"
+                    color="primary"
+                  >
+                    {{ translations[appLang]['Active'] }}
+                  </mat-checkbox>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div class="modal-footer d-flex justify-content-between" [ngClass]="appLang === 'ar' && 'rtl'">
+      <button
+        type="button"
+        (click)="onNoClick()"
+        class="btn btn-secondary"
+        data-dismiss="modal"
+      >
+        {{ translations[appLang]['Cancel'] }}
+      </button>
+      <button type="submit" class="btn btn-primary">
+        {{ translations[appLang]['Save'] }}
+      </button>
+    </div>
+  </div>
+</form>

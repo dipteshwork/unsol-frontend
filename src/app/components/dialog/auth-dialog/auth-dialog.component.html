@@ -1,0 +1,11 @@
+<h2 mat-dialog-title>{{ modalTitle }}</h2>
+<mat-dialog-content
+  >Your session has expired, please login again</mat-dialog-content
+>
+<mat-dialog-actions>
+  <button mat-button mat-dialog-close (click)="onAuthClickNo()">No</button>
+  <!-- The mat-dialog-close directive optionally accepts a value as a result for the dialog.-->
+  <button mat-button [mat-dialog-close]="true" (click)="onAuthClickYes()">
+    Yes
+  </button>
+</mat-dialog-actions>

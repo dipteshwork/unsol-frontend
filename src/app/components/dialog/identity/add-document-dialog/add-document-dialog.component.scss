@@ -1,0 +1,40 @@
+@import "../../../../../styles/variables.scss";
+
+.form-select.disabled {
+  background-color: #e9ecef;
+}
+
+.modal-header {
+  padding: 1rem 2rem;
+  min-height: 80px;
+  align-items: center;
+  background: $bg-secondary;
+  color: $white;
+  .modal-title {
+    align-items: center;
+  }
+  .close {
+    width: 20px !important;
+    background: $bg-secondary;
+    padding: 0;
+    border-radius: 50%;
+    color: $white;
+  }
+  .close:hover {
+    background: $bg-secondary;
+  }
+  .close:focus {
+    background: $bg-secondary;
+    outline: none;
+  }
+}
+.mat-form-field {
+  width: 100%;
+}
+.form-row {
+  .text-danger {
+    position: relative;
+    top: -20px;
+  }
+}
+

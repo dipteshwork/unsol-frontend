@@ -1,0 +1,22 @@
+.table-custom-responsive {
+  display: flex;
+  overflow: auto;
+}
+::ng-deep .mat-dialog-container {
+  padding: 0 !important;
+  border-radius: 12px !important;
+}
+
+::ng-deep .mat-tab-labels {
+  .mat-tab-label {
+    padding: 0;
+
+    span {
+      padding: 1rem;
+      min-width: 100px;
+    }
+  }
+  .mat-tab-label.mat-tab-label-active, .mat-tab-link.cdk-focused {
+    padding: 0;
+  }
+}

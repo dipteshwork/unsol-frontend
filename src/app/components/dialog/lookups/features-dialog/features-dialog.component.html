@@ -1,0 +1,65 @@
+<form [formGroup]="editDialogform" (ngSubmit)="submit(editDialogform)">
+  <div class="modal-content">
+    <app-custom-modal-header
+      [modalTitle]="translations[appLang][data.title]"
+      [appLang]="appLang"
+    >
+    </app-custom-modal-header>
+
+    <div class="modal-body">
+      <div class="col-md-12">
+        <app-language-bar
+          (childChangeLangEvent)="changeLang($event)"
+          [lang]="lang"
+          [langArr]="langArr"
+        >
+        </app-language-bar>
+      </div>
+      <div class="row mt-3">
+        <div class="col-md-12">
+          <div *ngFor="let curLang of langArr">
+            <mat-form-field
+              [ngClass]="appLang === 'ar' && 'rtl'"
+              *ngIf="curLang.toLowerCase() == lang"
+              appearance="outline"
+              class="col-md-12">
+              <mat-label for="lk_feature">{{ translations[appLang]['Feature'] }}</mat-label>
+              <input
+                matInput
+                [ngClass]="{'text-right': lang === 'ar'}"
+                formControlName="{{ curLang.toLowerCase() + 'Feature' }}"
+                placeholder="{{ translations[appLang]['Please enter Feature'] }}"
+                id="{{ curLang + 'lk_feature' }}"
+              />
+            </mat-form-field>
+          </div>
+        </div>
+
+      </div>
+      <div class="col-md-12">
+        <mat-checkbox
+          id="isActive"
+          class="checkbox-margin"
+          formControlName="isActive"
+          color="primary"
+        >
+          {{ translations[appLang]['Active'] }}
+        </mat-checkbox>
+      </div>
+    </div>
+
+    <div class="modal-footer d-flex justify-content-between" [ngClass]="appLang === 'ar' && 'rtl'">
+      <button
+        type="button"
+        (click)="onNoClick()"
+        class="btn btn-secondary"
+        data-dismiss="modal"
+      >
+        {{ translations[appLang]['Cancel'] }}
+      </button>
+      <button type="submit" class="btn btn-primary">
+        {{ translations[appLang]['Save'] }}
+      </button>
+    </div>
+  </div>
+</form>

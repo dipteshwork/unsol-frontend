@@ -1,0 +1,17 @@
+.modal-container {
+  border-radius: 10px;
+  .modal-content {
+    border: none;
+  }
+}
+.mat-form-field.rtl {
+  input {
+    text-align: right;
+  }
+}
+.modal-footer.rtl {
+  flex-direction: row-reverse;
+  .btn-secondary {
+    margin: 0 0 0 42px;
+  }
+}

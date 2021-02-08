@@ -1,0 +1,36 @@
+<form [formGroup]="amendForm" (ngSubmit)="submit(amendForm)">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title" id="newEntryTitle">{{ data.title }}</h5>
+      <button
+        type="button"
+        (click)="onNoClick()"
+        class="close"
+        data-dismiss="modal"
+        aria-label="Close"
+      >
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <div class="row">
+        <div class="col-md-12">
+          <label>{{ data.text }}</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer d-flex justify-content-center">
+      <button
+        type="button"
+        (click)="onNoClick()"
+        class="btn btn-secondary"
+        data-dismiss="modal"
+      >
+        {{ translations[lang]['Cancel'] }}
+      </button>
+      <button type="submit" class="btn btn-primary">{{ translations[lang]['Confirm'] }}</button>
+    </div>
+  </div>
+</form>

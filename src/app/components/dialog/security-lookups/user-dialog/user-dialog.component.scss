@@ -1,0 +1,29 @@
+.validation-error {
+  color: red;
+}
+
+.language-dropdown {
+  border: ridge;
+  border-radius: 6px;
+}
+
+.ml-2 {
+  margin-left: 20px;
+}
+
+.active-user {
+  display: flex;
+  margin-left: 14px;
+  margin-top: 10px;
+}
+.mat-form-field.rtl {
+  input {
+    text-align: right;
+  }
+}
+.modal-footer.rtl {
+  flex-direction: row-reverse;
+  .btn-secondary {
+    margin: 0 0 0 42px;
+  }
+}

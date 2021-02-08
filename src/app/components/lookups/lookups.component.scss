@@ -1,0 +1,22 @@
+.mycontent {
+  height: 100%;
+}
+
+.sidebarLK {
+  background-color: #4d4d4d;
+}
+
+li {
+  border: 0px !important;
+  color: #e7e7e7 !important;
+}
+
+li.active {
+  border: 0px !important;
+  color: #4d4d4d !important;
+  background-color: #e7e7e7 !important;
+}
+
+li.active:focus {
+  border: 0px !important;
+}

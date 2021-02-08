@@ -1,0 +1,81 @@
+<div class="col-md-12 p-0 mt-5 email-settings">
+  <div class="control-wrapper">
+    <app-custom-search-box (onFilterFunc)="applyFilter($event)">
+    </app-custom-search-box>
+
+    <div class="control-wrapper__right">
+      <button
+        type="button"
+        (click)="addNotiEmailDialog()"
+        class="btn bg-transparent navbar-brand"
+        data-toggle="modal"
+        data-target="#newEntry"
+      >
+        <i class="fas fa-plus-circle"></i
+        ><span class="h6" [ngClass]="lang !== 'ar' ? 'pl-2' : 'pr-2'">{{ getTranslation('New') }}</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="table-custom-responsive">
+    <table [ngClass]="lang === 'ar' && 'rtl'"
+      mat-table
+      class="mat-elevation-z8 w-100 table-strip"
+      [dataSource]="dataSource"
+      matSort
+    >
+      <ng-container class="custom-table-col" matColumnDef="position">
+        <th mat-header-cell *matHeaderCellDef>No</th>
+        <td mat-cell *matCellDef="let i = index">{{ i + 1 }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="emailType">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{ getTranslation('Email Type') }}
+        </th>
+        <td mat-cell *matCellDef="let rec">{{ rec.emailType }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="emailTitle">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{ getTranslation('Title') }}
+        </th>
+        <td mat-cell class="description-cell" *matCellDef="let rec">{{ rec.emailTitle }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="emailDescription">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{ getTranslation('Description') }}
+        </th>
+        <td mat-cell class="description-cell" *matCellDef="let rec">{{ rec.emailDescription }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="delete">
+        <th mat-header-cell class="text-center" *matHeaderCellDef>
+          {{ getTranslation('Delete') }}
+        </th>
+        <td
+          mat-cell
+          class="description-cell text-center"
+          *matCellDef="let rec"
+          (click)="rowClicked(rec, $event)"
+        >
+          <i class="fa fa-trash-alt"></i>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr
+        mat-row
+        *matRowDef="let row;
+        let even = even;
+        columns: displayedColumns"
+        [ngClass]="{ gray: even }"
+        (dblclick)="rowClicked(row, $event)"
+      ></tr>
+    </table>
+  </div>
+
+  <mat-paginator [ngClass]="lang === 'ar' && 'rtl'" [pageSize]="10" [pageSizeOptions]="[5, 10, 25]">
+  </mat-paginator>
+</div>

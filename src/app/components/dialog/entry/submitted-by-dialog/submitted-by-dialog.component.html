@@ -1,0 +1,67 @@
+<form
+  class="modal-container"
+  [formGroup]="submittedByDialogForm"
+  (ngSubmit)="submit(submittedByDialogForm)"
+>
+  <div class="modal-content">
+    <app-custom-modal-header
+      [modalTitle]="translations[lang][data.title]"
+    >
+    </app-custom-modal-header>
+
+    <div class="modal-body">
+      <div class="row mt-3">
+        <div class="col-md-12">
+          <label for="nameType">{{ translations[lang]['Submitted by'] }}</label>
+          <mat-select
+            [disabled]="data.isReadOnly"
+            [ngClass]="{
+            'form-control': true,
+            'select-country': true,
+            disabled: data.isReadOnly
+          }"
+            formControlName="countrytoChoose"
+            name="countrytoChoose"
+            id="countrytoChoose"
+          >
+            <mat-option [disabled]="data.isReadOnly">{{
+              translations[lang]['Select country']
+              }}</mat-option>
+            <mat-option
+              [disabled]="
+              data.isReadOnly || data['alreadyChosen'].includes(tmp.UN_name)
+            "
+              *ngFor="let tmp of data.countryLst.record"
+              [value]="tmp.UN_name"
+            >
+              {{ tmp.en_Short }}
+            </mat-option>
+          </mat-select>
+          <div *ngIf="isInvalid">
+            <strong style="color: red;">{{
+              translations[lang]['Please select a country'] || 'Please select a country'
+              }}</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <div class="d-flex justify-content-between">
+        <button
+          type="button"
+          (click)="onNoClick()"
+          class="btn btn-secondary"
+          data-dismiss="modal"
+        >
+          {{ translations[lang]['Cancel'] }}
+        </button>
+        <div *ngIf="!data.isReadOnly">
+          <button type="submit" class="btn btn-primary">
+            {{ translations[lang]['Save'] }}
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</form>

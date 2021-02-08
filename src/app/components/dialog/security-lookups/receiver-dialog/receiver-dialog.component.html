@@ -1,0 +1,113 @@
+<form [formGroup]="editUserDialogform" (ngSubmit)="submit(editUserDialogform)">
+  <div class="modal-content">
+    <app-custom-modal-header
+      [modalTitle]="getTranslation(data.title)"
+      [appLang]="curLang.toLowerCase()"
+    >
+    </app-custom-modal-header>
+
+    <div class="modal-body">
+      <div class="row pt-3">
+        <div class="col-sm-6">
+          <mat-form-field
+            class="example-full-width"
+            appearance="outline"
+            *ngIf="!data.rowData; else showEmail"
+          >
+            <input
+              type="text"
+              placeholder="Select user"
+              aria-label="Number"
+              matInput
+              [formControl]="userControl"
+              [matAutocomplete]="auto"
+            />
+            <mat-autocomplete
+              autoActiveFirstOption
+              #auto="matAutocomplete"
+              (optionSelected)="onChangeEmail($event.option.value)"
+            >
+              <mat-option
+                *ngFor="let option of filteredOptions | async"
+                [value]="option.userEmail"
+              >
+                {{ option.userEmail }}
+              </mat-option>
+            </mat-autocomplete>
+          </mat-form-field>
+
+          <ng-template #showEmail>
+            <p #showEmail>{{ curUser.userEmail }}</p>
+          </ng-template>
+        </div>
+        <div class="col-sm-6 role-section" *ngIf="isUserHasRole('Secretary')">
+          <label
+            for="rolesArr"
+            [class.invalid]="submitted && isInValidRegimeInput()"
+            >{{ getTranslation('Regime') }}</label
+          >
+          <div>
+            <div *ngFor="let regime of regimes; let i = index">
+              <mat-checkbox
+                class="checkbox-margin"
+                [checked]="getCheckedRegime(regime[curLang])"
+                (change)="updateRegime(regime[curLang], $event.checked)"
+                color="primary"
+              >
+                {{ getRegimeValue(regime[curLang]) }}
+              </mat-checkbox>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6">
+          <label for="rolesArr">{{ getTranslation('Roles') }}</label>
+          <div>
+            <div *ngFor="let userRole of allRoles; let i = index">
+              <mat-checkbox
+                class="checkbox-margin"
+                [checked]="getCheckedRole(userRole['roleName'])"
+                [disabled]="true"
+                color="primary"
+              >
+                {{ userRole['roleName'] }}
+              </mat-checkbox>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6" *ngIf="isUserHasRole('Translator')">
+          <label
+            for="rolesArr"
+            [class.invalid]="submitted && isInValidLangInput()"
+            >{{ getTranslation('Languages') }}</label
+          >
+          <div>
+            <div *ngFor="let lang of allLangs; let i = index">
+              <mat-checkbox
+                class="checkbox-margin"
+                [checked]="getCheckedLang(lang.acronym)"
+                (change)="updateLang(lang.acronym, $event.checked)"
+                color="primary"
+              >
+                {{ lang.name }}
+              </mat-checkbox>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer d-flex justify-content-center" [ngClass]="curLang === 'AR' && 'rtl'">
+      <button
+        type="button"
+        (click)="onNoClick()"
+        class="btn btn-secondary"
+        data-dismiss="modal"
+      >
+        {{ getTranslation('Cancel') }}
+      </button>
+      <button type="submit" class="btn btn-primary">{{ getTranslation('Save') }}</button>
+    </div>
+  </div>
+</form>

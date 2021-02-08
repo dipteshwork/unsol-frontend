@@ -1,0 +1,76 @@
+<div class="modal-content">
+  <div class="modal-header">
+    <h5 class="modal-title" id="newEntryTitle">{{ data.title }}</h5>
+    <button
+      type="button"
+      (click)="onNoClick(undefined)"
+      class="close"
+      data-dismiss="modal"
+      aria-label="Close"
+    >
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div class="modal-body">
+    <div class="row">
+      <div class="col-sm-12 p-2">
+        <p>Would you like to supersede sibling entries?</p>
+        <label class="identityLabel"
+          ><i class="fas fa-hashtag text-primary"></i
+          >{{ translations[lang]['Ongoing amendments'] }}</label
+        >
+        <table
+          mat-table
+          [dataSource]="ongoingAmendmentsDataSrc"
+          class="mat-elevation-z8 table publish-warning-dialog"
+        >
+          <ng-container matColumnDef="version">
+            <th mat-header-cell *matHeaderCellDef>
+              {{ translations[lang]['Amendment Id'] }}#
+            </th>
+            <td mat-cell *matCellDef="let element; let i = index">
+              <a class="btn-view-version">{{ element.amendmentId }}</a>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef>
+              {{ translations[lang]['Status'] }}
+            </th>
+            <td mat-cell *matCellDef="let element">{{ element.status }}</td>
+          </ng-container>
+          <ng-container matColumnDef="modifiedDte">
+            <th mat-header-cell *matHeaderCellDef>
+              {{ translations[lang]['Modified'] }}
+            </th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.modifiedDate }}
+            </td>
+          </ng-container>
+          <tr
+            mat-header-row
+            *matHeaderRowDef="ongoingAmendmentsDisplayedColumns"
+          ></tr>
+          <tr
+            mat-row
+            *matRowDef="let row; columns: ongoingAmendmentsDisplayedColumns"
+          ></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-footer d-flex justify-content-center">
+    <button
+      type="button"
+      (click)="onNoClick(false)"
+      class="btn btn-secondary"
+      data-dismiss="modal"
+    >
+      {{ translations[lang]['Cancel'] }}
+    </button>
+    <button type="button" (click)="submit()" class="btn btn-primary">
+      {{ translations[lang]['Confirm'] }}
+    </button>
+  </div>
+</div>

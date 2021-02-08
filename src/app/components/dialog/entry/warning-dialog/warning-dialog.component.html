@@ -1,0 +1,24 @@
+<div class="modal-content">
+  <app-custom-modal-header [modalTitle]="[data.title]">
+  </app-custom-modal-header>
+
+  <div class="modal-body">
+    <div class="row mx-3 mt-3">
+      <p>{{ data.description }}</p>
+    </div>
+  </div>
+  <div class="modal-footer d-flex justify-content-center">
+    <button
+      *ngIf="data['hasCancelButton']"
+      class="btn btn-secondary"
+      data-dismiss="modal"
+      (click)="onNoClick()"
+    >
+      Cancel
+    </button>
+    <button class="btn btn-primary"
+      (click)="handleClick()">
+      OK
+    </button>
+  </div>
+</div>

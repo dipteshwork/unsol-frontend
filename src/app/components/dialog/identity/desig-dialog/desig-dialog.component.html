@@ -1,0 +1,45 @@
+<form [formGroup]="desigDialogForm" (ngSubmit)="submit(desigDialogForm)">
+  <div class="modal-content">
+    <app-custom-modal-header
+      [modalTitle]="translations[lang][data.title]"
+    >
+    </app-custom-modal-header>
+
+    <div class="modal-body">
+      <div class="form-row">
+        <mat-form-field appearance="outline">
+          <mat-label>{{ translations[lang]['Designation'] }}</mat-label>
+          <input
+            matInput
+            [ngClass]="{'text-right': lang.toLocaleLowerCase() == 'ar'}"
+            id="designation"
+            formControlName="designation"
+            required
+          />
+        </mat-form-field>
+      </div>
+      <div *ngIf="isInvalid">
+        <strong style="color: red;">{{
+          translations[lang]['Designation value is required'] || 'Designation value is required'
+          }}</strong>
+      </div>
+    </div>
+    <div class="modal-footer d-flex justify-content-center">
+      <div class="d-flex justify-content-between">
+        <button
+          type="button"
+          (click)="onNoClick()"
+          class="btn btn-secondary"
+          data-dismiss="modal"
+        >
+          {{ translations[lang]['Cancel'] }}
+        </button>
+        <div *ngIf="!data.isReadOnly">
+          <button type="submit" class="btn btn-primary">
+            {{ translations[lang]['Save'] }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>

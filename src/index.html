@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>UNSOL</title>
+    <base href="/" />
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+
+    <!-- Scrollbar Custom CSS   -->
+    <link
+      rel="stylesheet"
+      href="./assets/customScrollbar/jquery.mCustomScrollbar.min.css"
+      type="text/css"
+    />
+    <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.4.1.min.js"></script>
+
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.7.0/css/all.css"
+      integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ"
+      crossorigin="anonymous"
+    />
+    <script src="./assets/customScrollbar/jquery.mCustomScrollbar.concat.min.js"></script>
+    <script src="./assets/b4/js/docxtemplater.js"></script>
+    <script src="./assets/b4/js/file-saver.min.js"></script>
+    <script src="./assets/b4/js/jszip-utils.js"></script>
+  </head>
+
+  <body class="mycontent">
+    <app-root></app-root>
+
+    <script src="./assets/popper.js/umd/popper.min.js"></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"
+      integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k"
+      crossorigin="anonymous"
+    ></script>
+
+    <!-- jQuery Custom Scroller CDN -->
+    <script src="./assets/customScrollbar/jquery.mCustomScrollbar.concat.min.js"></script>
+
+    <script
+      type="text/javascript"
+      src="https://jira.unicc.org/s/d41d8cd98f00b204e9800998ecf8427e-CDN/-m8g1g3/804003/6411e0087192541a09d88223fb51a6a0/2.2.4.7/_/download/batch/com.atlassian.plugins.jquery:jquery/com.atlassian.plugins.jquery:jquery.js?collectorId=c86d8d7e"
+    ></script>
+    <script
+      type="text/javascript"
+      src="https://jira.unicc.org/s/5ce213d190c7cb2bec8efd9eaf87501c-T/-m8g1g3/804003/6411e0087192541a09d88223fb51a6a0/3.1.0/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector.js?locale=en-US&collectorId=c86d8d7e"
+    ></script>
+
+    <script type="text/javascript">
+      $(document).ready(function () {
+        $.noConflict();
+
+        $('#sidebar').mCustomScrollbar({
+          theme: 'minimal',
+        });
+
+        $('.status-link').on('click', function () {
+          const links = $('.status-link');
+          for (let i = 0; i < links.length; i++) {
+            $(links[i]).removeClass('active');
+          }
+          $(this).addClass('active');
+        });
+
+        $('.list-group-item').on('click', function () {
+          const links = $('.list-group-item');
+          for (let i = 0; i < links.length; i++) {
+            $(links[i]).removeClass('active');
+          }
+          $(this).addClass('active');
+        });
+
+        $(document).on(
+          'click',
+          '.statusLinks, #dismiss, .sidebarOL',
+          function () {
+            $('#sidebar').removeClass('active');
+            $('.sidebarOL').removeClass('active');
+          }
+        );
+
+        $('.statusLinks, #dismiss, .sidebarOL').on('click', function () {
+          $('#sidebar').removeClass('active');
+          $('.sidebarOL').removeClass('active');
+        });
+
+        $(document).on('click', '.sidebarCollapse', function () {
+          if (window.screen.width > 768 && $(this).attr('indexKey') !== '1') {
+            return;
+          }
+          $('#sidebar').addClass('active');
+          $('.sidebarOL').addClass('active');
+          $('.collapse.in').toggleClass('in');
+          $('a[aria-expanded=true]').attr('aria-expanded', 'false');
+        });
+
+        $('.sidebarCollapse').on('click', function () {
+          if (window.screen.width > 768 && $(this).attr('indexKey') !== '1') {
+            return;
+          }
+          $('#sidebar').addClass('active');
+          $('.sidebarOL').addClass('active');
+          $('.collapse.in').toggleClass('in');
+          $('a[aria-expanded=true]').attr('aria-expanded', 'false');
+        });
+
+        // Jira Issue Collector
+        jQuery.ajax({
+          url:
+            'https://jira.unicc.org/s/5ce213d190c7cb2bec8efd9eaf87501c-T/-m8g1g3/804003/6411e0087192541a09d88223fb51a6a0/3.1.0/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector-embededjs/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector-embededjs.js?locale=en-US&collectorId=c86d8d7e',
+          type: 'get',
+          cache: true,
+          dataType: 'script',
+        });
+      });
+    </script>
+  </body>
+</html>

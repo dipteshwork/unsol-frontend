@@ -1,0 +1,59 @@
+<div [ngClass]="{'wrapper': true, 'rtl': appLang === 'ar'}">
+  <app-header
+    class="w-100 d-flex mh-80p"
+    [translations]="translations"
+    [langArr]="langArr"
+    [appLang]="appLang"
+    [index]="sidebarIndex"
+    [isAuthenticated]="isAuthenticated"
+    (changeIndex)="onChangeIndex($event)"
+  ></app-header>
+
+  <!-- Page Content  -->
+  <div id="content">
+    <div class="row h-100 d-flex content-body">
+      <ng-container *ngIf="isAuthenticated else notAuthenticated">
+        <ng-container *ngIf="lookupLst$ && appLang else fetching">
+          <div
+            class="content-body__left"
+            [ngClass]="{ 'home-collapsed': collapsed }"
+            *ngIf="isAuthorized"
+          >
+            <app-sidebar
+              [translations]="translations"
+              [appLang]="appLang"
+              [index]="sidebarIndex"
+              (changeRateColumn)="onChangeRageColumn($event)"
+            ></app-sidebar>
+          </div>
+          <div
+            class="content-body__right home-wrapper"
+            [ngClass]="{ 'home-collapsed': collapsed }"
+          >
+            <router-outlet></router-outlet>
+          </div>
+        </ng-container>
+        <ng-template #fetching>
+          <div class="data-fetching">
+            <h1>Loading...</h1>
+          </div>
+        </ng-template>
+      </ng-container>
+      <ng-template #notAuthenticated>
+        <ng-container *ngIf="isAuthenticating else authenticationFailed">
+          <div class="not-authenticated">
+            <h1>Authenticating...</h1>
+          </div>
+        </ng-container>
+        <ng-template #authenticationFailed>
+          <div class="not-authenticated">
+            <h1>Please login.</h1>
+          </div>
+        </ng-template>
+      </ng-template>
+    </div>
+    <!-- <app-footer></app-footer> -->
+  </div>
+</div>
+
+<div class="sidebarOL"></div>

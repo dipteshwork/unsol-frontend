@@ -1,0 +1,917 @@
+<div *ngIf="isLoading === false">
+  <div class="entry-header">
+    <div class="buttons-wrapper">
+      <button
+        class="close-button"
+        (click)="close()"
+      >
+        <i class="fa fa-times"></i>
+      </button>
+    </div>
+    <div
+      *ngIf="sanctionId"
+      class="navbar-brand ml-auto lang-bar"
+      id="renderedLang"
+    >
+      <div class="lang-bar__left">
+        <span class="fas fa-language">&nbsp;</span>
+        <span>Translation</span>
+      </div>
+
+      <div class="lang-bar__official" [ngClass]="lang !== 'AR' && 'rtl'">
+        <a
+          *ngFor="let curLang of langArr"
+          (click)="switchEntryLang(curLang)"
+          routerLinkActive="active-link"
+          [ngClass]="{
+            'lang-item': true,
+            active: curLang === lang,
+            working: curLang === workingLanguage,
+            disabled: isEditMode
+          }"
+        >
+          {{ curLang }}
+          <i *ngIf="translationStatus && translationStatus[curLang]" class="fa fa-check-circle"></i>
+        </a>
+      </div>
+
+      <div class="lang-bar__other" *ngIf="!azureAuthService.userIsReadOnly()">
+        <button
+          mat-icon-button
+          [matMenuTriggerFor]="otherLangMenu"
+          aria-label="Example icon-button with a menu"
+          [disabled]="isEditMode"
+        >
+        <span>{{
+          nonOfficialLangArr.indexOf(lang) >= 0 ? lang : 'Other'
+          }}</span>
+          <i class="fa fa-caret-down mr-2" aria-hidden="true"></i>
+        </button>
+
+        <mat-menu
+          #otherLangMenu="matMenu"
+          yPosition="below"
+          name="nonOfficialLang"
+          id="nonOfficialLang"
+          (selectionChange)="onChangeNonOfficialLang($event.value)"
+        >
+          <button
+            mat-menu-item
+            *ngFor="let curLang of nonOfficialLangObjects"
+            [ngClass]="{ 'working': curLang.acronym === workingLanguage }"
+            (click)="onChangeNonOfficialLang(curLang.acronym)"
+          >
+            {{ curLang.name }}
+            <i *ngIf="translationStatus && translationStatus[curLang.acronym]" class="fa fa-check-circle"></i>
+          </button>
+        </mat-menu>
+      </div>
+    </div>
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-white name-bar">
+      <div class="name-bar__left">
+        <div class="icon-wrapper">
+          <i
+            [ngClass]="{
+              fa: true,
+              'fa-user': getEntryIcon() === 'user',
+              'fa-industry': getEntryIcon() === 'industry',
+              'fa-ship': getEntryIcon() === 'ship',
+              'fa-plane': getEntryIcon() === 'plane'
+            }"
+            aria-hidden="true"
+          ></i>
+        </div>
+        <div class="name-wrapper">
+          <div
+            *ngIf="primaryName != 'null' && primaryName != 'undefined'"
+            title="{{ primaryName }}"
+            class="navbar-brand mr-auto entry-title"
+          >
+            {{ primaryName ? primaryName : '' }}
+          </div>
+          <div
+            *ngIf="refNum != null && refNum != 'null' && refNum != 'undefined'"
+            title="{{ primaryName }}"
+            class="navbar-brand mr-auto entry-ref"
+          >
+            Ref ID: {{ refNum }} -
+            {{ primaryName && primaryName }}
+          </div>
+        </div>
+      </div>
+      <div class="name-bar__right">
+        <div class="badge-status">
+          Status:
+          {{ sanctionForm && sanctionForm.get('lstReq').get('status').value }}
+        </div>
+      </div>
+    </nav>
+
+    <nav class="navbar navbar-expand-lg entry-tool-bar m-0">
+      <div *ngIf="ngxsSanctStatus == 'NEW' || ngxsSanctStatus == 'Init'">
+        <app-navigation-bar
+          [sancStatus]="ngxsSanctStatus"
+          [isEditMode]="isEditMode"
+          [lkupSrv]="lookupLst$"
+          [isFreeTextEditable]="isFreeTextEditable"
+          [isRemoveWrkFlwLinks]="isRemoveWrkFlwLinks"
+          [lang]="lang"
+          [workingMainLanguage]="workingMainLanguage"
+          (childDownloadEvent)="downloadTranslatedFile($event)"
+          (childPreviewEvent)="downloadTranslatedFile($event)"
+          (markAsCompletedEvent)="translationMarkAsCompleted()"
+          [translations]="translations"
+          [isLoading]="isLoading"
+        >
+        </app-navigation-bar>
+        <button
+          type="button"
+          (click)="saveNewEntry()"
+          class="btn bg-transparent navbar-brand"
+        >
+          <i class="far fa-save"></i><span class="pl-2 h6">Save</span>
+        </button>
+      </div>
+
+      <div *ngIf="ngxsSanctStatus == 'PENDING'">
+        <app-navigation-bar
+          [sancStatus]="ngxsSanctStatus"
+          [isEditMode]="isEditMode"
+          [lkupSrv]="lookupLst$"
+          [isFreeTextEditable]="isFreeTextEditable"
+          [isRemoveWrkFlwLinks]="isRemoveWrkFlwLinks"
+          [lang]="lang"
+          [workingMainLanguage]="workingMainLanguage"
+          (submitForReviewEvent)="submitReview()"
+          (markAsCompletedEvent)="translationMarkAsCompleted()"
+          (makeFormNonEditableEvent)="makeFormNonEditable($event)"
+          (makeFormEditableEvent)="makeFormEditable()"
+          (childDownloadEvent)="downloadTranslatedFile($event)"
+          (childPreviewEvent)="downloadTranslatedFile($event)"
+          (childDeleteSanctionEvent)="deleteSanction()"
+          (childOpenWrkFlwVersHistDialogEvent)="openWrkFlwVersHistDialog()"
+          (reviewTranslationEvent)="reviewTranslation()"
+          [translations]="translations"
+          [isTranslated]="isTranslated"
+          [officialLanguages]="langArr"
+          [isLoading]="isLoading"
+        >
+        </app-navigation-bar>
+      </div>
+
+      <div *ngIf="ngxsSanctStatus == 'SUBMIT4REVIEW'">
+        <app-navigation-bar
+          [sancStatus]="ngxsSanctStatus"
+          [isEditMode]="isEditMode"
+          [lkupSrv]="lookupLst$"
+          [areAllSubmitReviewConfirmed]="areAllSubmitReviewConfirmed"
+          [isFreeTextEditable]="isFreeTextEditable"
+          [isRemoveWrkFlwLinks]="isRemoveWrkFlwLinks"
+          [lang]="lang"
+          [isSubmitReviewConfirmed]="submitReviewConfirmed"
+          [workingMainLanguage]="workingMainLanguage"
+          (makeFormEditableEvent)="makeFormEditable()"
+          (confirmSubmit4ReviewEvent)="confirmSubmit4Review()"
+          (childOpenWrkFlwVersHistDialogEvent)="openWrkFlwVersHistDialog()"
+          (childSaveEditedFreeTextEvent)="saveEditedFreeText()"
+          (childDeleteSanctionEvent)="deleteSanction()"
+          (openOnholdDialogEvent)="onHoldSanction()"
+          (makeFormNonEditableEvent)="makeFormNonEditable($event)"
+          (publishEvent)="publish()"
+          (childDownloadEvent)="downloadTranslatedFile($event)"
+          (markAsCompletedEvent)="translationMarkAsCompleted()"
+          (reviewTranslationEvent)="reviewTranslation()"
+          (childPreviewEvent)="downloadTranslatedFile($event)"
+          [canBePublished]="canBePublished"
+          (areAllLangsSubmitReviewConfirmedEvent)="areAllLangsSubmitReviewConfirmed()"
+          [translations]="translations"
+          [isTranslated]="isTranslated"
+          [officialLanguages]="langArr"
+          [isLoading]="isLoading"
+        >
+        </app-navigation-bar>
+      </div>
+
+      <div *ngIf="ngxsSanctStatus == 'ONHOLD'">
+        <app-navigation-bar
+          [sancStatus]="ngxsSanctStatus"
+          [isEditMode]="isEditMode"
+          [lkupSrv]="lookupLst$"
+          [isFreeTextEditable]="isFreeTextEditable"
+          [isRemoveWrkFlwLinks]="isRemoveWrkFlwLinks"
+          [lang]="lang"
+          [workingMainLanguage]="workingMainLanguage"
+          (submitForReviewEvent)="submitReview()"
+          (makeFormNonEditableEvent)="makeFormNonEditable($event)"
+          (makeFormEditableEvent)="makeFormEditable()"
+          (childDownloadEvent)="downloadTranslatedFile($event)"
+          (childPreviewEvent)="downloadTranslatedFile($event)"
+          (previewEvent)="preview()"
+          (publishEvent)="publish()"
+          (markAsCompletedEvent)="translationMarkAsCompleted()"
+          (reviewTranslationEvent)="reviewTranslation()"
+          (childOpenWrkFlwVersHistDialogEvent)="openWrkFlwVersHistDialog()"
+          (childDeleteSanctionEvent)="deleteSanction()"
+          [translations]="translations"
+          [isTranslated]="isTranslated"
+          [officialLanguages]="langArr"
+          [isLoading]="isLoading"
+        >
+        </app-navigation-bar>
+      </div>
+
+      <div *ngIf="ngxsSanctStatus == 'ACTIVE'">
+        <app-navigation-bar
+          [sancStatus]="ngxsSanctStatus"
+          [isEditMode]="isEditMode"
+          [lkupSrv]="lookupLst$"
+          [isFreeTextEditable]="isFreeTextEditable"
+          [isRemoveWrkFlwLinks]="isRemoveWrkFlwLinks"
+          [lang]="lang"
+          [workingMainLanguage]="workingMainLanguage"
+          (childDownloadEvent)="downloadTranslatedFile($event)"
+          (childPreviewEvent)="downloadTranslatedFile($event)"
+          (amendEvent)="reviewAmend()"
+          (previewEvent)="preview()"
+          (childOpenWrkFlwVersHistDialogEvent)="openWrkFlwVersHistDialog()"
+          (reviewEvent)="review()"
+          (delistEvent)="delist()"
+          (markAsCompletedEvent)="translationMarkAsCompleted()"
+          [translations]="translations"
+          (makeFormNonEditableEvent)="makeFormNonEditable($event)"
+          [isTranslated]="isTranslated"
+          [officialLanguages]="langArr"
+          [isLoading]="isLoading"
+        >
+        </app-navigation-bar>
+      </div>
+
+      <div *ngIf="ngxsSanctStatus == 'DELISTED'">
+        <app-navigation-bar
+          (publishEvent)="publish()"
+          [sancStatus]="ngxsSanctStatus"
+          [isEditMode]="isEditMode"
+          [lkupSrv]="lookupLst$"
+          [isFreeTextEditable]="isFreeTextEditable"
+          [isRemoveWrkFlwLinks]="isRemoveWrkFlwLinks"
+          [lang]="lang"
+          [workingMainLanguage]="workingMainLanguage"
+          (childDownloadEvent)="downloadTranslatedFile($event)"
+          (childPreviewEvent)="downloadTranslatedFile($event)"
+          (markAsCompletedEvent)="translationMarkAsCompleted()"
+          (childOpenWrkFlwVersHistDialogEvent)="openWrkFlwVersHistDialog()"
+          [translations]="translations"
+          [officialLanguages]="langArr"
+          [isLoading]="isLoading"
+        >
+        </app-navigation-bar>
+      </div>
+
+      <div *ngIf="ngxsSanctStatus == 'Deleted'">
+        <app-navigation-bar
+          [sancStatus]="ngxsSanctStatus"
+          [isEditMode]="isEditMode"
+          [lkupSrv]="lookupLst$"
+          [isFreeTextEditable]="isFreeTextEditable"
+          [isRemoveWrkFlwLinks]="isRemoveWrkFlwLinks"
+          [lang]="lang"
+          [workingMainLanguage]="workingMainLanguage"
+          (childDownloadEvent)="downloadTranslatedFile($event)"
+          (childPreviewEvent)="downloadTranslatedFile($event)"
+          (markAsCompletedEvent)="translationMarkAsCompleted()"
+          (childOpenWrkFlwVersHistDialogEvent)="openWrkFlwVersHistDialog()"
+          [translations]="translations"
+          [isLoading]="isLoading"
+        >
+        </app-navigation-bar>
+      </div>
+    </nav>
+  </div>
+
+  <div class="entry-body">
+    <form
+      class="new-user-form"
+      *ngIf="isReady"
+      [formGroup]="sanctionForm"
+      (ngSubmit)="onSubmit(false)"
+    >
+      <!-- <div class="accordion" id="entryAccordion"> -->
+      <mat-tab-group #entryTabs class="entry-tabs">
+        <mat-tab matTooltip="testme">
+          <ng-template mat-tab-label>{{
+            getTranslation('Listing Request')
+            }}</ng-template>
+          <div
+            class="card border-0 overflow-hidden"
+            formGroupName="lstReq"
+            id="lstngReq"
+          >
+            <div class="row" *ngIf="(isEditMode || isFreeTextEditable); else showSection">
+              <div class="col-md-4">
+                <div class="input-group">
+                  <mat-form-field appearance="outline">
+                    <mat-label>{{ getTranslation('Entry Type') }}</mat-label>
+                    <input [ngClass]="{'text-right': lowLang == 'ar'}" matInput formControlName="recordTyp" readonly />
+                  </mat-form-field>
+                </div>
+                <div class="input-group">
+                  <mat-form-field appearance="outline">
+                    <mat-label>{{ getTranslation('Regime') }}</mat-label>
+                    <mat-select
+                      formControlName="regime"
+                      name="regime"
+                      id="regime"
+                    >
+                      <mat-option
+                        *ngFor="let regimeS of regimes; let i = index"
+                        value="{{ i }}--{{ getRegimeValue(regimeS[lang]) }}"
+                        (click)="onChangeRegime($event, i)"
+                      >{{ getRegimeValue(regimeS[lang]) }}</mat-option
+                      >
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+                <div class="input-group">
+                  <mat-form-field appearance="outline">
+                    <mat-label>{{
+                      getTranslation('Statement Confidential')
+                      }}</mat-label>
+                    <textarea
+                      matInput
+                      [ngClass]="{'text-right': lowLang == 'ar'}"
+                      formControlName="stmntConfid"
+                      name="stmntConfid"
+                      id="stmntConfid"
+                      placeholder="{{
+                      getTranslation('Enter confidential statement here')
+                    }}"
+                    ></textarea>
+                  </mat-form-field>
+                </div>
+              </div>
+
+              <div class="col-md-4">
+                <div class="input-group">
+                  <mat-form-field appearance="outline">
+                    <mat-label>{{ getTranslation('Interpol UNSN') }}</mat-label>
+                    <input
+                      matInput
+                      [ngClass]="{'text-right': lowLang == 'ar'}"
+                      formControlName="interpolNum"
+                      placeholder="{{
+                      getTranslation('Please enter Interpol number')
+                    }}"
+                      id="toDte"
+                    />
+                  </mat-form-field>
+                </div>
+                <div class="input-group">
+                  <mat-form-field appearance="outline">
+                    <mat-label>{{ getTranslation('Submitted On') }}</mat-label>
+                    <input
+                      matInput
+                      [ngClass]="{'text-right': lowLang == 'ar'}"
+                      [matDatepicker]="picker2"
+                      formControlName="submittdOn"
+                      placeholder="{{ getTranslation('Choose a date') }}"
+                      id="submittdOn"
+                    />
+                    <mat-datepicker-toggle
+                      matSuffix
+                      [for]="picker2"
+                    ></mat-datepicker-toggle>
+                    <mat-datepicker #picker2></mat-datepicker>
+                  </mat-form-field>
+                </div>
+
+                <label class="entryFormLabel">{{
+                  getTranslation('Submitted by')
+                  }}</label>
+                <table
+                  mat-table
+                  [dataSource]="submittedByDataSrc"
+                  class="mat-elevation-z8 table-identity"
+                >
+                  <ng-container
+                    [matColumnDef]="config.property"
+                    *ngFor="
+                      let config of submittedBycountryNamesDisplayedCols;
+                      trackBy: trackByIndex
+                    "
+                  >
+                    <th mat-header-cell *matHeaderCellDef>
+                      <div
+                        *ngIf="
+                          (ngxsSanctStatus == 'NEW' ||
+                          ngxsSanctStatus == 'Init' ||
+                          ngxsSanctStatus == 'AMEND' ||
+                          (ngxsSanctStatus == 'PENDING' && !isReadOnly) ||
+                          (ngxsSanctStatus == 'SUBMIT4REVIEW' && !isReadOnly)) &&
+                          config.property == 'editColumn';
+                          else alts
+                        "
+                        class="lastColumn"
+                      >
+                        <i
+                          class="fas fa-plus fa-2x text-success"
+                          data-toggle="modal"
+                          data-target="#newName"
+                          (click)="openSubmittedByDialog()"
+                        ></i>
+                      </div>
+                      <ng-template #alts>
+                        {{ getTranslation(config.name) }}
+                      </ng-template>
+                    </th>
+                    <div *ngIf="config.property == 'countryName'">
+                      <td mat-cell *matCellDef="let element">
+                        {{ getTranslation(element.submittedby) }}
+                      </td>
+                    </div>
+                    <div *ngIf="config.property == 'editColumn'">
+                      <td
+                        mat-cell
+                        class="lastColumn"
+                        *matCellDef="let element; let row; let i = index"
+                        class="lastColumn"
+                        data-toggle="tooltip"
+                        data-placement="top"
+                      >
+                        <i
+                          class="far fa-trash-alt"
+                          aria-hidden="true"
+                          title="Remove"
+                          (click)="submittedByRowClicked(row, i, isReadOnly)"
+                        ></i>
+                      </td>
+                    </div>
+                  </ng-container>
+                  <tr
+                    mat-header-row
+                    *matHeaderRowDef="submittedBycountryNamesDisplayedColsArr"
+                  ></tr>
+                  <tr
+                    mat-row
+                    *matRowDef="
+                    let row;
+                    let even = even;
+                    columns: submittedBycountryNamesDisplayedColsArr
+                  "
+                    [ngClass]="{ gray: even }"
+                  ></tr>
+                </table>
+
+                <label class="member-states-confidential" for="mbmrStConfid">{{
+                  getTranslation('Member states are confidential')
+                  }}</label>
+                <div class="input-group mb-3">
+                  <div class="input-group-prepend">
+                    <div>
+                      <mat-checkbox
+                        formControlName="mbmrStConfid"
+                        (change)="onMemberStatesChange($event)"
+                        [value]="mbmrStConfid"
+                        color="primary"
+                      >{{ getTranslation('Yes') || 'Yes' }}</mat-checkbox
+                      >
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-4">
+                <div class="input-group">
+                  <mat-form-field appearance="outline">
+                    <mat-label>{{ getTranslation('Notes') }}</mat-label>
+                    <textarea
+                      matInput
+                      [ngClass]="{'text-right': lowLang == 'ar'}"
+                      formControlName="lstngNotes"
+                      name="lstngNotes"
+                      id="lstngNotes"
+                      placeholder="{{
+                        getTranslation('Enter Notes here')
+                      }}"
+                    ></textarea>
+                  </mat-form-field>
+                </div>
+                <div>
+                  <p class="entryFormLabel" class="ml">
+                    {{ getTranslation('Measures') }}
+                  </p>
+                  <div
+                    *ngIf="regimeMeas != null && regimeMeas.length > 0"
+                    formArrayName="applicableMeasures"
+                  >
+                    <div
+                      *ngFor="
+                      let item of sanctionForm
+                        .get('lstReq')
+                        .get('applicableMeasures').controls;
+                      let i = index
+                    "
+                    >
+                      <label>
+                        <mat-checkbox
+                          [formControlName]="i"
+                          (change)="onCheckboxChange($event, i)"
+                          [value]="item.value"
+                          color="primary"
+                        >{{ regimeMeas[i] }}</mat-checkbox
+                        >
+                      </label>
+                    </div>
+                    <div *ngIf="!getApplicableMeasuresValid()">
+                      <strong style="color: red;">{{
+                        getTranslation(
+                          'At least one measure needs to be selected.'
+                        )
+                        }}</strong>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <ng-template #showSection>
+              <div class="row">
+                <div class="col-md-4">
+                  <div class="info-panel">
+                    <div class="row">
+                      <div class="col-md-7">
+                      <span class="info-label"
+                      >{{ getTranslation('Entry Type') }}:</span
+                      >
+                      </div>
+                      <div class="col-md-5">
+                      <span class="info-value">{{
+                        sanctionForm.get('lstReq').get('recordTyp').value
+                        }}</span>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-7">
+                      <span class="info-label"
+                      >{{ getTranslation('Regime') }}:</span
+                      >
+                      </div>
+                      <div class="col-md-5">
+                        <span class="info-value">{{ getRegimeName() }}</span>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-7">
+                      <span class="info-label"
+                      >{{ getTranslation('Measures') }}:</span
+                      >
+                      </div>
+                      <div class="col-md-5">
+                        <p class="info-value" *ngFor="let measure of getSelectedMeasures()">
+                          {{ measure }}
+                        </p>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-7">
+                      <span class="info-label"
+                      >{{ getTranslation('Statement Confidential') }}:</span
+                      >
+                      </div>
+                      <div class="col-md-5">
+                      <span class="info-value">
+                        {{
+                        sanctionForm.get('lstReq').get('stmntConfid').value
+                        }}
+                      </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="info-panel">
+                    <div class="row">
+                      <div class="col-md-7">
+                        <span class="info-label">{{ getTranslation('Interpol UNSN') }}:</span>
+                      </div>
+                      <div class="col-md-5">
+                      <span class="info-value">{{
+                        sanctionForm.get('lstReq').get('interpolNum').value
+                        }}</span>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-7">
+                      <span class="info-label"
+                      >{{ getTranslation('Submitted On') }}:</span
+                      >
+                      </div>
+                      <div class="col-md-5">
+                      <span class="info-value">{{
+                        sanctionForm.get('lstReq').get('submittdOn').value
+                        }}</span>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-7">
+                      <span class="info-label"
+                      >{{ getTranslation('Submitted by') }}:</span
+                      >
+                      </div>
+                      <div class="col-md-5">
+                      <span
+                        class="info-value"
+                        *ngFor="let submittedby of getSelectedCountries()"
+                      >
+                        {{ submittedby }}
+                      </span>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-7">
+                      <span class="info-label"
+                      >{{
+                        getTranslation('Member states are confidential')
+                        }}:</span
+                      >
+                      </div>
+                      <div class="col-md-5">
+                        <span class="info-value">{{ getTranslation(mbmrStConfid ? 'Yes' : 'No') }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="info-panel">
+                    <p class="info-label">{{ getTranslation('Notes') }}</p>
+                    <div class="info-notes m-0">
+                      <p class="m-0">
+                        {{ sanctionForm.get('lstReq').get('lstngNotes').value }}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </ng-template>
+
+            <!-- BEGIN Press release section   -->
+            <div class="activity-notes">
+              <div
+                class="p-0"
+                *ngIf="ngxsSanctStatus != 'New' && ngxsSanctStatus != 'Init'"
+              >
+                <div *ngIf="!isActivityLgEmpty">
+                  <label
+                    *ngIf="!isActivityLgEmpty && activityLogs.length > 0"
+                    class="entryFormLabel activity-notes__label"
+                    for="activityNotes"
+                  >{{ getTranslation('Activity notes') }}</label
+                  >
+                  <div
+                    class="activity-notes__body"
+                    *ngFor="let actvLg of activityLogs; let i = index"
+                  >
+                    <span>{{ actvLg.description }}"</span>
+                    <span class="ml-3 release-btn color-blue" *ngIf="(actvLg.nextState === 'ACTIVE') && (i === 0)" (click)="openPressReleaseDialog()">Press Release</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- <div
+                class="col-md-12 p-0"
+                *ngIf="
+                ngxsSanctStatus == 'ACTIVE' ||
+                ngxsSanctStatus == 'DELISTED' ||
+                ngxsSanctStatus == 'REMOVED' ||
+                ngxsSanctStatus == 'SUBMIT4REVIEW'
+              "
+              >
+                <div formArrayName="presRelesee">
+                  <label
+                    *ngIf="
+                    sanctionForm.get('lstReq').get('presRelesee').controls
+                      .length > 0
+                  "
+                    class="entryFormLabel"
+                    for="activityNotes"
+                  >{{ getTranslation('Press release') }}</label
+                  >
+                  <div *ngFor="let press of testpressR; let i = index">
+                    <div id="pressRelease">{{ press }}</div>
+                  </div>
+                </div>
+              </div> -->
+            </div>
+          </div>
+        </mat-tab>
+
+        <mat-tab matTooltip="testme">
+          <ng-template mat-tab-label>{{
+            getTranslation('Narrative Summary')
+            }}</ng-template>
+          <div class="card border-0" formGroupName="narrativeSumm">
+            <div id="entryCollapseTwo">
+              <div class="card-body row p-0">
+                <div class="col-sm-6">
+                  <div class="form-row m-0">
+                    <mat-form-field appearance="outline">
+                      <mat-label>{{
+                        getTranslation('Available on')
+                        }}</mat-label>
+                      <input
+                        matInput
+                        [ngClass]="{'text-right': lowLang == 'ar'}"
+                        [matDatepicker]="picker3"
+                        formControlName="availDte"
+                        id="availOnDte"
+                      />
+                      <mat-datepicker-toggle
+                        matSuffix
+                        [for]="picker3"
+                      ></mat-datepicker-toggle>
+                      <mat-datepicker #picker3></mat-datepicker>
+                    </mat-form-field>
+                  </div>
+                </div>
+
+                <div class="col-sm-6">
+                  <div class="form-row m-0">
+                    <mat-form-field appearance="outline">
+                      <mat-label>
+                        {{ getTranslation('Related listed entries') }}
+                      </mat-label>
+                      <input
+                        matInput
+                        [ngClass]="{'text-right': lowLang == 'ar'}"
+                        #reltedLstInput
+                        formControlName="reltedLst"
+                        type="search"
+                        results="5"
+                        name="s"
+                        id="srchRelatedEntries"
+                        (selectItem)="selectedItem($event, reltedLstInput)"
+                        [resultFormatter]="formatter"
+                        [ngbTypeahead]="search"
+                        placeholder="{{
+                         getTranslation('Search by Permanent Reference Number')
+                        }}"
+                      />
+                      <div
+                        matSuffix
+                      >
+                        <i class="fa fa-search cursor-pointer" (click)="onClickSearchBtn()"></i>
+                      </div>
+                    </mat-form-field>
+                    <div
+                      *ngIf="
+                      searchRelatedLstResult != null &&
+                      searchRelatedLstResult.length > 0
+                    "
+                    >
+                      <div
+                        formArrayName="srchRelatedLstArr"
+                        *ngFor="
+                        let item of sanctionForm
+                          .get('narrativeSumm')
+                          .get('srchRelatedLstArr').controls;
+                        let i = index
+                      "
+                      >
+                        <div
+                          [formGroupName]="i"
+                          class="input-group align-middle search-result"
+                        >
+                          <input
+                            type="text"
+                            class="form-control-plaintext"
+                            formControlName="sanctionedRelLstRefNum"
+                            readonly
+                          />
+                          <span> - </span>
+                          <input
+                            type="text"
+                            class="form-control-plaintext"
+                            formControlName="sanctionedRelLstName"
+                            readonly
+                          />
+                          <button
+                            type="button"
+                            (click)="resizeSrchRelatedLstArr(i)"
+                            class="btn btn-link"
+                          >
+                            <i class="fa fa-times" aria-hidden="true"></i>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-sm-6">
+                  <mat-form-field appearance="outline">
+                    <mat-label>{{
+                      getTranslation('Reason for listing')
+                      }}</mat-label>
+                    <textarea
+                      matInput
+                      [ngClass]="{'text-right': lowLang == 'ar'}"
+                      formControlName="lstingReason"
+                      name="lstngReason"
+                      id="lstngReason"
+                    ></textarea>
+                  </mat-form-field>
+                </div>
+
+                <div class="col-sm-6">
+                  <div>
+                    <mat-form-field appearance="outline">
+                      <mat-label>{{
+                        getTranslation('Additional Information')
+                        }}</mat-label>
+                      <textarea
+                        matInput
+                        [ngClass]="{'text-right': lowLang == 'ar'}"
+                        formControlName="addtlInfo"
+                        name="addtlInfo"
+                        id="addtlInfo"
+                        placeholder="{{ getTranslation('Type your text ...') }}"
+                      ></textarea>
+                    </mat-form-field>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </mat-tab>
+
+        <mat-tab matTooltip="testme">
+          <ng-template mat-tab-label>{{
+            getTranslation('Identities')
+            }}</ng-template>
+          <div class="card border-0">
+            <button
+              *ngIf="!isReadOnly && azureAuthService.userIsOfficer()"
+              mat-button
+              class="btn-add-tab"
+              type="button"
+              (click)="addTab(true)"
+            >
+              <i class="fa fa-plus"></i>
+              <span class="btn-label">Add Identity</span>
+            </button>
+
+            <div id="entryCollapseThree">
+              <div class="card-body row p-0 m-0">
+                <div class="col-md-12">
+                  <mat-tab-group #idTabs class="identity-tab-wrapper">
+                    <mat-tab
+                      matTooltip="testme"
+                      *ngFor="let tab of tabs; let i = index"
+                    >
+                      <ng-template mat-tab-label>
+                        ({{ i + 1 }})
+                        {{ tab.tabData?.names.names[0] && tab.tabData?.names.names[0].name.substring(0, 25) }}
+                        <button
+                          *ngIf="i > 0 && azureAuthService.userIsOfficer()"
+                          type="button"
+                          [disabled]="isReadOnly"
+                          (click)="removeTab(i)"
+                          class="close p-2"
+                        >
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </ng-template>
+
+                      <app-identity
+                        [sanctionForm]="sanctionForm"
+                        [tabData]="tab.tabData"
+                        [id]="i"
+                        [lkupSrv]="lookupLst$"
+                        [entryTyp]="recordType"
+                        [sancStatus]="ngxsSanctStatus"
+                        [isFreeTextEditable]="isFreeTextEditable"
+                        [isReadOnly]="isReadOnly"
+                        [isCreateMode]="isCreateMode"
+                        [isTranslationMode]="isTranslationMode"
+                        [lang]="lang"
+                        [translations]="translations"
+                        [isEditableLiviginStatusAndGender]="isEditableLiviginStatusAndGender"
+                      >
+                      </app-identity>
+                    </mat-tab>
+                  </mat-tab-group>
+                </div>
+              </div>
+            </div>
+          </div>
+        </mat-tab>
+      </mat-tab-group>
+      <!-- </div> -->
+    </form>
+  </div>
+</div>
+<div *ngIf="isLoading === true">
+  <div class="spinner-container">
+    <mat-spinner diameter="100" color="warn"></mat-spinner>
+  </div>
+</div>

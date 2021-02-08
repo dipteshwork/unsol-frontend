@@ -1,0 +1,130 @@
+<form
+  [formGroup]="editCountriesDialogform"
+  (ngSubmit)="submit(editCountriesDialogform)"
+>
+  <div class="modal-content">
+    <app-custom-modal-header
+      [modalTitle]="translations[appLang][data.title]"
+      [appLang]="appLang"
+    >
+    </app-custom-modal-header>
+
+    <div class="modal-body" [ngClass]="appLang === 'ar' && 'rtl'">
+      <div class="col-md-12">
+        <app-language-bar
+          (childChangeLangEvent)="changeLang($event)"
+          [lang]="lang"
+          [langArr]="langArr"
+        >
+        </app-language-bar>
+      </div>
+      <div class="row mt-3">
+        <div class="col-sm-12">
+          <mat-form-field appearance="outline" class="col-md-12" [ngClass]="appLang === 'ar' && 'rtl'">
+            <mat-label for="measuresName">{{ 'UN name' }}</mat-label>
+<!--            <mat-label for="measuresName">{{ translations[appLang]['UN name'] }}</mat-label>-->
+            <input
+              matInput
+              [ngClass]="{'text-right': lang === 'ar'}"
+              formControlName="unName"
+              placeholder="{{ translations[appLang]['Please enter UN name'] }}"
+              id="measuresName"
+            />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="col-md-12" [ngClass]="appLang === 'ar' && 'rtl'">
+            <mat-label for="measuresPrefix">{{ 'M 49 code' }}</mat-label>
+<!--            <mat-label for="measuresPrefix">{{ translations[appLang]['M 49 code'] }}</mat-label>-->
+            <input
+              matInput
+              [ngClass]="{'text-right': lang === 'ar'}"
+              formControlName="m49Cde"
+              placeholder="{{ translations[appLang]['Please enter M 49 code'] }}"
+              id="measuresPrefix"
+            />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="col-md-12" [ngClass]="appLang === 'ar' && 'rtl'">
+            <mat-label for="measuresArr">{{ 'ISO code' }}</mat-label>
+<!--            <mat-label for="measuresArr">{{ translations[appLang]['ISO code'] }}</mat-label>-->
+            <input
+              matInput
+              [ngClass]="{'text-right': lang === 'ar'}"
+              formControlName="isoCde"
+              placeholder="{{ translations[appLang]['Please enter ISO code'] }}"
+              id="measuresArr"
+            />
+          </mat-form-field>
+
+          <div *ngFor="let language of languageArr">
+            <mat-form-field
+              [ngClass]="appLang === 'ar' && 'rtl'"
+              *ngIf="language.acronym.toLowerCase() == lang"
+              appearance="outline" class="col-md-12">
+              <mat-label for="shortName">{{ language.name + ' short' }}</mat-label>
+              <input
+                matInput
+                [ngClass]="{'text-right': lang === 'ar'}"
+                formControlName="{{ language.acronym.toLowerCase() + 'S' }}"
+                placeholder="{{ translations[appLang]['Please enter ' + language.name + ' short name'] }}"
+                id="{{ language.acronym + 'shortName' }}"
+              />
+            </mat-form-field>
+          </div>
+
+          <mat-form-field appearance="outline" class="col-md-12" [ngClass]="appLang === 'ar' && 'rtl'">
+            <mat-label for="measuresUnMem">{{ 'Un membership' }}</mat-label>
+            <input
+              matInput
+              [ngClass]="{'text-right': lang === 'ar'}"
+              formControlName="unMem"
+              placeholder="{{ translations[appLang]['Please enter Un membership'] }}"
+              id="measuresUnMem"
+            />
+          </mat-form-field>
+
+          <div *ngFor="let language of languageArr">
+            <mat-form-field
+              [ngClass]="appLang === 'ar' && 'rtl'"
+              *ngIf="language.acronym.toLowerCase() == lang"
+              appearance="outline" class="col-md-12">
+              <mat-label for="Formal">{{  language.name + ' formal' }}</mat-label>
+              <input
+                matInput
+                [ngClass]="{'text-right': lang === 'ar'}"
+                formControlName="{{ language.acronym.toLowerCase() + 'F' }}"
+                placeholder="{{ translations[appLang]['Please enter ' + language.name + ' formal'] }}"
+                id="{{ language.acronym + 'Formal' }}"
+              />
+            </mat-form-field>
+          </div>
+        </div>
+        <div class="col-md-12 mb-3">
+          <mat-checkbox
+            id="isActive"
+            class="checkbox-margin"
+            formControlName="isActive"
+            color="primary"
+          >
+            {{ translations[appLang]['Active'] }}
+          </mat-checkbox>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer d-flex justify-content-center" [ngClass]="appLang === 'ar' && 'rtl'">
+      <button
+        type="button"
+        (click)="onNoClick()"
+        class="btn btn-secondary"
+        data-dismiss="modal"
+      >
+        {{ translations[appLang]['Cancel'] }}
+      </button>
+      <button type="submit" class="btn btn-primary">
+        {{ translations[appLang]['Save'] }}
+      </button>
+    </div>
+
+  </div>
+</form>

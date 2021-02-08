@@ -1,0 +1,43 @@
+<form
+  [formGroup]="editTranslationsDialogform"
+  (ngSubmit)="submit(editTranslationsDialogform)"
+>
+  <div class="modal-content">
+    <app-custom-modal-header
+      [modalTitle]="translations[lang][data.title]"
+      [appLang]="lang"
+    >
+    </app-custom-modal-header>
+
+    <div class="modal-body">
+      <div class="row mt-3">
+        <div class="col-md-12">
+          <div *ngFor="let language of languageArr; let i = index">
+            <mat-form-field appearance="outline" class="col-md-12" [ngClass]="lang === 'ar' && 'rtl'">
+              <mat-label>{{ translations[lang][language.name] }}</mat-label>
+              <input
+                matInput
+                [ngClass]="{'text-right': language.acronym.toLowerCase() === 'ar'}"
+                [formControlName]="language.acronym.toLowerCase()"
+                placeholder="{{ translations[lang]['Please enter Translation Data'] }}"
+              />
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer d-flex justify-content-between" [ngClass]="lang === 'ar' && 'rtl'">
+      <button
+        type="button"
+        (click)="onNoClick()"
+        class="btn btn-secondary"
+        data-dismiss="modal"
+      >
+        {{ translations[lang]['Cancel'] }}
+      </button>
+      <button type="submit" class="btn btn-primary">
+        {{ translations[lang]['Save'] }}
+      </button>
+    </div>
+  </div>
+</form>

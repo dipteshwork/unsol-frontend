@@ -1,0 +1,190 @@
+<form [formGroup]="addrDialogform" (ngSubmit)="submit(addrDialogform)">
+  <div class="modal-content">
+    <app-custom-modal-header
+      [modalTitle]="translations[lang][data.title]"
+    >
+    </app-custom-modal-header>
+
+    <div class="modal-body">
+      <div class="form-row">
+        <mat-radio-group id="dobType" formControlName="locOptions">
+          <mat-radio-button class="example-radio-button p-2" value="Address">
+            {{ translations[lang]['Address'] || 'Address' }}
+          </mat-radio-button>
+          <mat-radio-button class="example-radio-button p-2" value="Region">
+            {{ translations[lang]['Location'] || 'Location' }}
+          </mat-radio-button>
+        </mat-radio-group>
+      </div>
+      <ng-template #address>
+        <div class="form-row">
+          <div class="col-md-12">
+            <mat-form-field appearance="outline">
+              <mat-label>{{ translations[lang]['Street'] || 'Street' }}</mat-label>
+              <input
+                matInput
+                [ngClass]="{'text-right': lang.toLocaleLowerCase() == 'ar'}"
+                formControlName="street"
+                id="street"
+              />
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>{{ translations[lang]['City'] || 'City'}}</mat-label>
+              <input 
+                [ngClass]="{'text-right': lang.toLocaleLowerCase() == 'ar'}"
+                matInput
+                formControlName="city"
+                id="city" />
+            </mat-form-field>
+            <div class="form-row">
+              <div class="col-md-6">
+                <mat-form-field appearance="outline">
+                  <mat-label>{{
+                    (translations[lang]['State'] + '/' + translations[lang]['Province']) || 'State/Province'
+                    }}</mat-label>
+                  <input
+                    matInput
+                    [ngClass]="{'text-right': lang.toLocaleLowerCase() == 'ar'}"
+                    formControlName="stateProv"
+                    id="stateProv"
+                  />
+                </mat-form-field>
+              </div>
+              <div class="col-md-6">
+                <mat-form-field appearance="outline">
+                  <mat-label>{{ translations[lang]['Zip code'] || 'Zip code' }}</mat-label>
+                  <input
+                    matInput
+                    [ngClass]="{'text-right': lang.toLocaleLowerCase() == 'ar'}"
+                    formControlName="zipCde"
+                    id="zipCde"
+                  />
+                </mat-form-field>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-12">
+            <mat-form-field appearance="outline">
+              <mat-label>{{ translations[lang]['Country'] || 'Country'}}</mat-label>
+              <mat-select
+                [disabled]="data.isReadOnly || data.isTranslationMode"
+                formControlName="country"
+                name="country"
+                id="country"
+              >
+                <mat-option [value]="null">{{
+                  translations[lang]['Select country']
+                  }}</mat-option>
+                <mat-option
+                  *ngFor="let addrCmtry of data.country"
+                  [value]="addrCmtry['Short_name']"
+                >
+                  {{ addrCmtry.Short_name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <div
+              *ngIf="
+                addrDialogform.errors?.addrErr &&
+                addrDialogform.controls.locOptions.value == 'Address' &&
+                (addrDialogform.controls.country.touched ||
+                  addrDialogform.controls.country.dirty)
+              "
+              class="text-danger"
+            >
+              {{ translations[lang]['Please select a country'] || 'Please select a country'}}
+            </div>
+          </div>
+        </div>
+      </ng-template>
+      <div
+        class="col-md-12 p-0"
+        *ngIf="
+          addrDialogform.controls.locOptions.value == 'Region';
+          else address
+        "
+      >
+        <div class="form-row">
+          <div class="col-sm-12">
+            <mat-form-field appearance="outline">
+              <mat-label>{{ translations[lang]['Region'] || 'Region' }}</mat-label>
+              <input 
+                matInput
+                [ngClass]="{'text-right': lang.toLocaleLowerCase() == 'ar'}"
+                formControlName="region"
+                id="region" />
+            </mat-form-field>
+            <div
+              *ngIf="
+              addrDialogform.errors?.addrErr &&
+              addrDialogform.controls.locOptions.value == 'Region'
+            "
+              class="text-danger"
+            >
+              {{ translations[lang]['Please enter a value for region'] || 'Please enter a value for region'}}
+            </div>
+          </div>
+
+        </div>
+        <div class="form-row">
+          <div class="col-md-6">
+            <mat-form-field appearance="outline">
+              <mat-label>{{ translations[lang]['Latitude'] || 'Latitude'}}</mat-label>
+              <input
+                matInput
+                [ngClass]="{'text-right': lang.toLocaleLowerCase() == 'ar'}"
+                id="lat"
+                type="text"
+                formControlName="lat"
+              />
+            </mat-form-field>
+          </div>
+          <div class="col-md-6">
+            <mat-form-field appearance="outline">
+              <mat-label>{{ translations[lang]['Longitude'] || 'Longitude' }}</mat-label>
+              <input
+                matInput
+                [ngClass]="{'text-right': lang.toLocaleLowerCase() == 'ar'}"
+                id="lng"
+                type="text"
+                formControlName="lng"
+              />
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="col-sm-12">
+          <mat-form-field appearance="outline">
+            <mat-label>{{ translations[lang]['Notes'] || 'Notes'}}</mat-label>
+            <textarea
+              matInput
+              [ngClass]="{'text-right': lang.toLocaleLowerCase() == 'ar'}"
+              formControlName="note"
+              id="note"
+            ></textarea>
+          </mat-form-field>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer d-flex justify-content-center">
+      <div class="d-flex justify-content-between">
+        <button
+          type="button"
+          (click)="onNoClick()"
+          class="btn btn-secondary"
+          data-dismiss="modal"
+        >
+          {{ translations[lang]['Cancel'] }}
+        </button>
+        <div *ngIf="!data.isReadOnly">
+          <button type="submit" class="btn btn-primary">
+            {{ translations[lang]['Save'] }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>

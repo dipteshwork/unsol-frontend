@@ -1,0 +1,48 @@
+@import "../../../../styles/variables.scss";
+// @import "/src/styles/variables.scss";
+
+.custom-search-box {
+  .input-group-append {
+    height: 48px;
+
+    .input-group-text {
+      border-color: $border-grey-50;
+      border-radius: 8px 0 0 8px;
+      background-color: white;
+      border-right: none;
+      padding: 0 12px 0 20px;
+      &.rtl {
+        border-right: 1px solid $border-grey-50;
+        border-radius: 0 8px 8px 0;
+      }
+
+      i {
+        color: $text-dark;
+      }
+    }
+  }
+  input {
+    height: 48px;
+    width: 230px;
+    color: $text-dark-50;
+    font-size: 14px;
+    border-left: none;
+    border-right: none;
+    border-color: $border-grey-50;
+    box-shadow: none;
+  }
+  .btn-wrapper {
+    background-color: $bg-secondary;
+    height: 48px;
+    border: $border-secondary;
+    display: flex;
+    padding: 0 25px;
+    align-items: center;
+    color: white;
+    border-radius: 0 8px 8px 0;
+    cursor: pointer;
+    &.rtl {
+      border-radius: 8px 0 0 8px;
+    }
+  }
+}

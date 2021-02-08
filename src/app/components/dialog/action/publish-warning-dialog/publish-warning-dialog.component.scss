@@ -1,0 +1,25 @@
+::ng-deep {
+  .publish-warning-dialog {
+    & > thead {
+      display: block;
+
+      & > tr {
+        display: table;
+        width: 100%;
+      }
+    }
+    & > tbody {
+      display: block;
+      min-height: 200px;
+      max-height: 300px;
+      overflow: auto;
+
+      & > tr {
+        display: table;
+        table-layout: fixed;
+        width: 100%;
+        border-bottom: solid 1px rgb(228, 228, 228);
+      }
+    }
+  }
+}

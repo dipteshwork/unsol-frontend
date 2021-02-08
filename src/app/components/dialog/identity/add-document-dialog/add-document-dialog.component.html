@@ -1,0 +1,240 @@
+<!-- Modal Documents-->
+<form [formGroup]="docDialogform" (ngSubmit)="submit(docDialogform)">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title" id="newEntryTitle">
+        {{ translations[lang][data.title] }}
+      </h5>
+      <button
+        type="button"
+        mat-button
+        mat-dialog-close
+        class="close mr-0"
+        data-dismiss="modal"
+        aria-label="Close"
+        (click)="onNoClick()"
+      >
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-row">
+            <mat-form-field appearance="outline">
+              <mat-label>{{
+                translations[lang]['Document number'] || 'Document number'
+                }}</mat-label>
+              <input
+                matInput
+                [ngClass]="{'text-right': lang.toLocaleLowerCase() == 'ar'}"
+                [readOnly]="data.isReadOnly"
+                formControlName="docNum"
+                id="docNum"
+              />
+            </mat-form-field>
+            <div
+              *ngIf="
+                docDialogform.errors?.docNumErr &&
+                (docDialogform.touched || docDialogform.dirty)
+              "
+              class="text-danger "
+            >
+              {{
+              translations[lang][
+                'Please enter a document number'
+                ] ||
+                'Please enter a document number'
+              }}
+            </div>
+          </div>
+          <div class="form-row">
+            <mat-form-field appearance="outline">
+              <mat-label>{{
+                translations[lang]['Document type']
+              }}</mat-label>
+              <mat-select
+                [disabled]="data.isReadOnly || data.isTranslationMode"
+                formControlName="docType"
+                name="docType"
+                id="docType"
+              >
+                <mat-option>{{ translations[lang]['Select script'] }}</mat-option>
+                <mat-option
+                  *ngFor="let tmpDocType of data.docType"
+                  [value]="tmpDocType"
+                  >{{ tmpDocType }}</mat-option
+                >
+              </mat-select>
+            </mat-form-field>
+            <div
+              *ngIf="
+                docDialogform.errors?.docTypeErr &&
+                (docDialogform.touched || docDialogform.dirty)
+              "
+              class="text-danger"
+            >
+              {{
+                translations[lang][
+                  'Please enter a  document type'
+                ] ||
+                'Please enter a  document type'
+              }}
+            </div>
+          </div>
+          <div class="form-row">
+            <mat-form-field appearance="outline">
+              <mat-label>{{ translations[lang]['Document type'] }} 2</mat-label>
+              <input
+                matInput
+                [ngClass]="{'text-right': lang.toLocaleLowerCase() == 'ar'}"
+                [readOnly]="data.isReadOnly"
+                formControlName="docTyp1"
+                name="docTyp1"
+                id="docTyp1"
+              />
+            </mat-form-field>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-row">
+            <mat-form-field appearance="outline">
+              <mat-label>{{ translations[lang]['Issue date'] || 'Issue date' }}</mat-label>
+              <input
+                matInput
+                [ngClass]="{'text-right': lang.toLocaleLowerCase() == 'ar'}"
+                [max]="tomorrow"
+                formControlName="issueDte"
+                [matDatepicker]="myDatepicker"
+              />
+              <mat-datepicker-toggle
+                matSuffix
+                [for]="myDatepicker"
+              ></mat-datepicker-toggle>
+              <mat-datepicker #myDatepicker></mat-datepicker>
+            </mat-form-field>
+          </div>
+          <div class="form-row">
+            <mat-form-field appearance="outline">
+              <mat-label>{{ translations[lang]['Expiration date'] || 'Expiration date'}}</mat-label>
+              <input
+                [min]="yesterday"
+                matInput
+                [ngClass]="{'text-right': lang.toLocaleLowerCase() == 'ar'}"
+                formControlName="expDte"
+                [matDatepicker]="myDatepicker1"
+              />
+              <mat-datepicker-toggle
+                matSuffix
+                [for]="myDatepicker1"
+              ></mat-datepicker-toggle>
+              <mat-datepicker #myDatepicker1></mat-datepicker>
+            </mat-form-field>
+          </div>
+          <div
+            *ngIf="
+              docDialogform.errors?.dateErr
+            "
+            class="text-danger"
+          >
+            {{
+              translations[lang]["Expiration date can't be before issue date"] || "Expiration date can't be before issue date"
+            }}
+          </div>
+          <div class="form-row">
+            <mat-form-field appearance="outline">
+              <mat-label>{{
+                translations[lang]['Issuing city'] || 'Issuing city'
+                }}</mat-label>
+              <input
+                matInput
+                [ngClass]="{'text-right': lang.toLocaleLowerCase() == 'ar'}"
+                [readOnly]="data.isFreeTextEditable"
+                formControlName="issuingCity"
+                id="fValue"
+              />
+            </mat-form-field>
+          </div>
+          <div class="form-row">
+            <mat-form-field appearance="outline">
+              <mat-label>{{
+                translations[lang]['Issuing country'] || 'Issuing country'
+                }}</mat-label>
+              <mat-select
+                [disabled]="data.isReadOnly || data.isTranslationMode"
+                formControlName="issuingCntry"
+                name="issuingCntry"
+                id="issuingCntry"
+              >
+                <mat-option [value]="null">{{
+                  translations[lang]['Select country'] || 'Select country'
+                  }}</mat-option>
+                <mat-option
+                  *ngFor="let tmpCountry of data.issuingCntry"
+                  value="{{ tmpCountry['en_Short'] }}"
+                >{{ tmpCountry['en_Short'] }}</mat-option
+                >
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div class="form-row">
+            <mat-form-field appearance="outline">
+              <mat-label>{{
+                translations[lang]['Issued country'] || 'Issued country'
+                }}</mat-label>
+              <mat-select
+                [disabled]="data.isReadOnly || data.isTranslationMode"
+                formControlName="issuedCntry"
+                name="issuedCntry"
+                id="issuedCntry"
+              >
+                <mat-option>{{
+                  translations[lang]['Select country'] || 'Select country'
+                  }}</mat-option>
+                <mat-option
+                  *ngFor="let tmpCountry of data.issuedCntry"
+                  value="{{ tmpCountry['en_Short'] }}"
+                >{{ tmpCountry['en_Short'] }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="form-row">
+            <mat-form-field appearance="outline">
+              <mat-label>{{ translations[lang]['Notes'] }}</mat-label>
+              <textarea
+                matInput
+                [ngClass]="{'text-right': lang.toLocaleLowerCase() == 'ar'}"
+                [readOnly]="data.isReadOnly && !data.isFreeTextEditable"
+                formControlName="note"
+                id="docNote"
+              ></textarea>
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer d-flex justify-content-center">
+      <div class="d-flex justify-content-between">
+        <button
+          type="button"
+          (click)="onNoClick()"
+          class="btn btn-secondary"
+          data-dismiss="modal"
+        >
+          {{ translations[lang]['Cancel'] }}
+        </button>
+        <div *ngIf="!data.isReadOnly">
+          <button type="submit" class="btn btn-primary">
+            {{ translations[lang]['Save'] }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>

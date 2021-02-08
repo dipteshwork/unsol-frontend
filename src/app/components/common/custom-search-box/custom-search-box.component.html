@@ -1,0 +1,13 @@
+<div class="input-group custom-search-box">
+  <div class="input-group-append">
+    <div class="input-group-text" [ngClass]="{ 'rtl': lang === 'ar' }"><i class="fa fa-search"></i></div>
+  </div>
+  <input
+    class="form-control"
+    (keyup)="applyFilter($event.target.value)"
+    placeholder="{{ getTranslation('Search with name regime, etc...') }}"
+  />
+  <div class="btn-wrapper" [ngClass]="{ 'rtl': lang === 'ar' }">
+    <span>{{ getTranslation('Search') }}</span>
+  </div>
+</div>

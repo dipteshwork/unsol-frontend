@@ -1,0 +1,1196 @@
+<form [formGroup]="identityForm" (ngSubmit)="onSubmit(identityForm)">
+  <div id="identity" class="row m-0 snd-back">
+    <div id="leftIdentity" class="col-xl-6 col-md-12">
+      <div class="row p-2">
+        <div class="col-md-6">
+          <mat-form-field appearance="outline">
+            <mat-label>{{ getTranslation('Identity Type') }}</mat-label>
+            <mat-select
+              formControlName="idType"
+              name="idType"
+              id="idType"
+              [disabled]="isReadOnly || isTranslationMode"
+            >
+              <mat-option
+                *ngFor="let rec of idTypes"
+                [value]="rec[this.lang]['idTypeName']"
+                [disabled]="rec[this.lang]['idTypeName'] == 'Primary' || (id > 0 && rec[this.lang]['idTypeName'] == 'Primary') || isReadOnly"
+              >
+                {{ rec[this.lang]['idTypeName'] }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <div *ngIf="identityForm.controls.idType.invalid">
+            <strong style="color: red;">{{
+              getTranslation('Identity type is required')
+            }}</strong>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <mat-form-field appearance="outline">
+            <mat-label>{{ getTranslation('Category') }}</mat-label>
+            <mat-select
+              formControlName="category"
+              name="category"
+              id="category"
+              [disabled]="isReadOnly || isTranslationMode"
+            >
+              <mat-option
+                *ngFor="let rec of idCategories"
+                [value]="rec[this.lang]['idCategoryName']"
+              >
+                {{ rec[this.lang]['idCategoryName'] }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <div *ngIf="identityForm.controls.category.invalid">
+            <strong style="color: red;">{{
+              getTranslation('Category is required')
+            }}</strong>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <label class="identityLabel">
+          <i class="fas fa-hashtag text-primary"></i>
+          {{ getTranslation('Names') }}
+        </label>
+        <table mat-table [dataSource]="namesDataSrc" class="mat-elevation-z8 table-identity">
+          <ng-container
+            *ngFor="let config of namesDisplayedColumnsArr"
+            [matColumnDef]="config['property']"
+          >
+            <th mat-header-cell *matHeaderCellDef>
+              <div
+                *ngIf="
+                  (sancStatus == 'NEW' ||
+                    sancStatus == 'Init' ||
+                    sancStatus == 'AMEND' ||
+                    (sancStatus == 'PENDING' && !isReadOnly) ||
+                    (sancStatus == 'SUBMIT4REVIEW' && !isReadOnly)) &&
+                    (!fullNameFlag) &&
+                    config.property == 'editColumn';
+                  else noAddtlNms
+                "
+                (click)="openDialog()"
+                class="lastColumn"
+              >
+                <i
+                  class="fas fa-plus fa-2x text-success"
+                  data-toggle="modal"
+                  data-target="#newName"
+                ></i>
+              </div>
+              <ng-template #noAddtlNms>
+                {{ getTranslation(config.name) }}
+              </ng-template>
+            </th>
+            <div
+              *ngIf="
+                config.property == 'editColumn' && isReadOnly == false;
+                else otherNameAttrs
+              "
+            >
+              <td
+                mat-cell
+                *matCellDef="let element; let row; let i = index"
+                class="lastColumn"
+                data-toggle="tooltip"
+                data-placement="top"
+              >
+                <i
+                  class="fa fa-edit table-icon"
+                  aria-hidden="true"
+                  title="Edit"
+                  (click)="rowClicked(row, i, isReadOnly)"
+                ></i>
+                <i
+                  class="fas fa-times table-icon"
+                  aria-hidden="true"
+                  title="Delete"
+                  (click)="rowDeleteClicked(row, i, isReadOnly)"
+                ></i>
+              </td>
+            </div>
+
+            <ng-template #otherNameAttrs>
+              <td mat-cell *matCellDef="let element">
+                {{ element[config.property] }}
+              </td>
+            </ng-template>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="namesToBDisplayedCols"></tr>
+          <tr
+            mat-row
+            *matRowDef="
+              let row;
+              let even = even;
+              let i = index;
+              columns: namesToBDisplayedCols
+            "
+            [ngClass]="{ gray: even }"
+            (dblclick)="rowClicked(row, i, isReadOnly)"
+            matTooltipHideDelay="100000"
+            matTooltip="{{row.name}}, {{row.order}}, {{row.nameType}}, {{row.script}}"
+          ></tr>
+        </table>
+        <div
+          *ngIf="!identityForm.controls.names.valid"
+          style="margin-top: 10px;"
+        >
+          <strong style="color: red;">{{
+            getTranslation('At least a single name is required.')
+          }}</strong>
+        </div>
+      </div>
+
+      <div>
+        <label class="identityLabel">
+          <i class="fas fa-hashtag text-primary"></i
+          >{{ getTranslation('Name Original Script') }}
+        </label>
+        <table
+          mat-table
+          [dataSource]="nameOrgScptDataSrc"
+          class="mat-elevation-z8 table-identity"
+        >
+          <ng-container
+            [matColumnDef]="config.property"
+            *ngFor="
+              let config of namesDisplayedColumnsArr;
+              trackBy: trackByNameIndex
+            "
+          >
+            <th mat-header-cell *matHeaderCellDef>
+              <div
+                *ngIf="
+                  (sancStatus == 'Init' ||
+                    sancStatus == 'NEW' ||
+                    sancStatus == 'AMEND' ||
+                    (sancStatus == 'PENDING' && !isReadOnly) ||
+                    (sancStatus == 'SUBMIT4REVIEW' && !isReadOnly)) &&
+                    (!fullNameOrgFlag) &&
+                    config.property == 'editColumn';
+                  else noAddtlNms
+                "
+                (click)="openNameOrgSptDialog()"
+                class="lastColumn"
+              >
+
+                <i
+                  class="fas fa-plus fa-2x text-success"
+                  data-toggle="modal"
+                  data-target="#newName"
+                ></i>
+              </div>
+              <ng-template #noAddtlNms>
+                {{ config.name }}
+              </ng-template>
+            </th>
+            <div *ngIf="config.property == 'editColumn'; else noAddtlNmOrgScpt">
+              <td
+                mat-cell
+                *matCellDef="let element; let row; let i = index"
+                data-toggle="tooltip"
+                data-placement="top"
+                title="Click for details"
+                class="lastColumn"
+              >
+                <i
+                  class="fa fa-edit table-icon"
+                  aria-hidden="true"
+                  title="Edit"
+                  (click)="rowClickedNmOrgSpt(row, i, isReadOnly)"
+                ></i>
+                <i
+                  class="fas fa-times table-icon"
+                  aria-hidden="true"
+                  title="Delete"
+                  (click)="rowClickedNmOrgSptDelete(row, i, isReadOnly)"
+                ></i>
+              </td>
+            </div>
+            <ng-template #noAddtlNmOrgScpt>
+              <td mat-cell *matCellDef="let element">
+                {{ element[config.property] }}
+              </td>
+            </ng-template>
+            {{config.property}}
+          </ng-container>
+
+          <tr
+            mat-header-row
+            *matHeaderRowDef="nameOrgScrpDisplayedColumns"
+          ></tr>
+          <tr
+            mat-row
+            *matRowDef="
+              let row;
+              let i = index;
+              columns: nameOrgScrpDisplayedColumns
+            "
+            (dblclick)="rowClickedNmOrgSpt(row, i, isReadOnly, isFreeTextEditable)"
+          ></tr>
+        </table>
+      </div>
+
+      <div *ngIf="(entryTypeUrlFlag && (entryTyp === 'Individual')) || (!entryTypeUrlFlag && (entryTyp === (entryTypeTh)))"
+        formGroupName="genderStatus" style="margin-top: 32px">
+        <div class="row">
+          <div class="col-md-6">
+            <mat-form-field appearance="outline">
+              <mat-label>{{ getTranslation('Gender') }}</mat-label>
+              <mat-select
+                formControlName="gender"
+                name="gender"
+                id="gender"
+                [ngModel]="langConvertGenderObj ? langConvertGenderObj[lang]['genderName'] : ''"
+                [disabled]="!isFreeTextEditable
+                  || isTranslationMode
+                  || (isFreeTextEditable && !entryTypeUrlFlag && (entryTyp !== (entryTypeTh)))
+                  || (isFreeTextEditable && entryTypeUrlFlag && (entryTyp !== 'Individual'))"
+              >
+                <mat-option
+                  *ngFor="let rec of genders"
+                  [value]="rec[this.lang]['genderName']"
+                  >{{ rec[this.lang]['genderName'] }}</mat-option
+                >
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div class="col-md-6">
+            <mat-form-field appearance="outline">
+              <mat-label>{{ getTranslation('Living Status') }}</mat-label>
+              <mat-select
+                formControlName="livngStat"
+                name="livngStat"
+                id="livngStat"
+                [ngModel]="langConvertLivingStatusObj ? langConvertLivingStatusObj[lang]['livingStatusName'] : ''"
+                [disabled]="!isFreeTextEditable
+                  || isTranslationMode
+                  || (isFreeTextEditable && !entryTypeUrlFlag && (entryTyp !== (entryTypeTh)))
+                  || (isFreeTextEditable && entryTypeUrlFlag && (entryTyp !== 'Individual'))"
+              >
+                <mat-option
+                  *ngFor="let rec of livingStatuses"
+                  [value]="rec[this.lang]['livingStatusName']"
+                >
+                  {{ rec[this.lang]['livingStatusName'] }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-12">
+          <label class="identityLabel"
+            ><i class="fas fa-hashtag text-primary"></i
+            >{{ getTranslation('Nationalities') }}</label
+          >
+          <table
+            mat-table
+            [dataSource]="nationaltyDataSrc"
+            class="mat-elevation-z8 table-identity"
+          >
+            <ng-container
+              [matColumnDef]="config.property"
+              *ngFor="
+                let config of nationaltyDisplayedColumnsArr;
+                let j = index;
+                trackBy: trackByNationalityIndex
+              "
+            >
+              <th mat-header-cell *matHeaderCellDef>
+                <div
+                  *ngIf="
+                    !isReadOnly && config.property == 'editColumn';
+                    else noAddtlNationality
+                  "
+                  (click)="openNationalityDialog()"
+                  class="lastColumn"
+                >
+                  <i
+                    class="fas fa-plus fa-2x text-success"
+                    data-toggle="modal"
+                    data-target="#newName"
+                  ></i>
+                </div>
+                <ng-template #noAddtlNationality>
+                  {{ config.name }}
+                </ng-template>
+              </th>
+              <div [ngSwitch]="config.property">
+                <div *ngSwitchCase="'count'">
+                  <td mat-cell *matCellDef="let element; let i = index">
+                    {{ i }}
+                  </td>
+                </div>
+                <div *ngSwitchCase="'editColumn'">
+                  <td
+                    mat-cell
+                    *matCellDef="let element; let row; let i = index"
+                    data-toggle="tooltip"
+                    data-placement="top"
+                    title="Click for details"
+                    class="lastColumn"
+                  >
+                    <i
+                      class="fa fa-edit table-icon"
+                      aria-hidden="true"
+                      title="Edit"
+                      (click)="nationalityRowClicked(row, i, isReadOnly)"
+                    ></i>
+                    <i
+                      class="fas fa-times table-icon"
+                      aria-hidden="true"
+                      title="Delete"
+                      (click)="nationalityRowClickedDelete(row, i, isReadOnly)"
+                    ></i>
+                  </td>
+                </div>
+                <div *ngSwitchDefault>
+                  <td mat-cell *matCellDef="let element">
+                    {{ getShortName(element, config) }}
+                  </td>
+                </div>
+              </div>
+            </ng-container>
+            <tr
+              mat-header-row
+              *matHeaderRowDef="nationaltyDisplayedColumns"
+            ></tr>
+            <tr
+              mat-row
+              *matRowDef="
+                let row;
+                let i = index;
+                columns: nationaltyDisplayedColumns
+              "
+              (dblclick)="nationalityRowClicked(row, i, isReadOnly)"
+            ></tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="row" *ngIf="(entryTyp === entryTypeTh || entryTyp === 'Individual'); else elseTitleIndividual">
+        <div class="col-md-12">
+          <label for="idTitle" class="identityLabel"
+            ><i class="fas fa-hashtag text-primary"></i
+            >{{ getTranslation('Titles') }}</label
+          >
+          <table mat-table [dataSource]="titleDataSrc" class="mat-elevation-z8 table-identity">
+            <ng-container
+              [matColumnDef]="config.property"
+              *ngFor="
+                let config of titleDisplayedColumnsArr;
+                trackBy: trackByDesignationIndex
+              "
+            >
+              <th mat-header-cell *matHeaderCellDef>
+                <div
+                  *ngIf="
+                    !isReadOnly && config.property == 'editColumn';
+                    else noAddtlTitle
+                  "
+                  (click)="openTitleDialog()"
+                  class="lastColumn"
+                >
+                  <i
+                    class="fas fa-plus fa-2x text-success"
+                    data-toggle="modal"
+                    data-target="#newName"
+                  ></i>
+                </div>
+                <ng-template #noAddtlTitle>
+                  {{ config.name }}
+                </ng-template>
+              </th>
+              <div [ngSwitch]="config.property">
+                <div *ngSwitchCase="'count'">
+                  <td mat-cell *matCellDef="let element; let i = index">
+                    {{ i }}
+                  </td>
+                </div>
+                <div *ngSwitchCase="'editColumn'">
+                  <td
+                    mat-cell
+                    *matCellDef="let element; let row; let i = index"
+                    data-toggle="tooltip"
+                    data-placement="top"
+                    title="Click for details"
+                    class="lastColumn"
+                  >
+                    <i
+                      class="fa fa-edit table-icon"
+                      aria-hidden="true"
+                      title="Edit"
+                      (click)="
+                        titleRowClicked(row, i, isReadOnly, isFreeTextEditable)
+                      "
+                    ></i>
+                    <i
+                      class="fas fa-times table-icon"
+                      aria-hidden="true"
+                      title="Delete"
+                      (click)="
+                        titleRowClickedDelete(
+                          row,
+                          i,
+                          isReadOnly,
+                          isFreeTextEditable
+                        )
+                      "
+                    ></i>
+                  </td>
+                </div>
+                <div *ngSwitchDefault>
+                  <td mat-cell *matCellDef="let element">
+                    {{ element[config.property] }}
+                  </td>
+                </div>
+              </div>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="titleDisplayedColumns"></tr>
+            <tr
+              mat-row
+              *matRowDef="let row; columns: titleDisplayedColumns; let i = index"
+              (dblclick)="titleRowClicked(row, i, isReadOnly, isFreeTextEditable)"
+            ></tr>
+          </table>
+        </div>
+      </div>
+
+      <ng-template #elseTitleIndividual>
+        <div class="row" style="margin-top: 32px">
+          <div class="col-md-12">
+            <div class="input-group">
+              <mat-form-field appearance="outline">
+                <mat-label>{{ getTranslation('Titles') }}</mat-label>
+                <input
+                  matInput
+                  [ngClass]="{'text-right': lang.toLocaleLowerCase() == 'ar'}"
+                  [readonly]="!isFreeTextEditable"
+                  formControlName="idTitleSingle"
+                  placeholder="{{ getTranslation('Please enter title') }}"
+                />
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+      </ng-template>
+
+      <div class="row">
+        <div class="col-md-12">
+          <label for="idDesig" class="identityLabel"
+            ><i class="fas fa-hashtag text-primary"></i
+            >{{ getTranslation('Designations') }}</label
+          >
+          <table mat-table [dataSource]="desigDataSrc" class="mat-elevation-z8 table-identity">
+            <ng-container
+              [matColumnDef]="config.property"
+              *ngFor="
+                let config of desigDisplayedColumnsArr;
+                trackBy: trackByDesignationIndex
+              "
+            >
+              <th mat-header-cell *matHeaderCellDef>
+                <div
+                  *ngIf="
+                    !isReadOnly && config.property == 'editColumn';
+                    else noAddtlDesig
+                  "
+                  (click)="openDesigDialog()"
+                  class="lastColumn"
+                >
+                  <i
+                    class="fas fa-plus fa-2x text-success"
+                    data-toggle="modal"
+                    data-target="#newName"
+                  ></i>
+                </div>
+                <ng-template #noAddtlDesig>
+                  {{ config.name }}
+                </ng-template>
+              </th>
+              <div [ngSwitch]="config.property">
+                <div *ngSwitchCase="'count'">
+                  <td mat-cell *matCellDef="let element; let i = index">
+                    {{ i }}
+                  </td>
+                </div>
+                <div *ngSwitchCase="'editColumn'">
+                  <td
+                    mat-cell
+                    *matCellDef="let element; let row; let i = index"
+                    data-toggle="tooltip"
+                    data-placement="top"
+                    title="Click for details"
+                    class="lastColumn"
+                  >
+                    <i
+                      class="fa fa-edit table-icon"
+                      aria-hidden="true"
+                      title="Edit"
+                      (click)="
+                        desigRowClicked(row, i, isReadOnly, isFreeTextEditable)
+                      "
+                    ></i>
+                    <i
+                      class="fas fa-times table-icon"
+                      aria-hidden="true"
+                      title="Delete"
+                      (click)="
+                        desigRowClickedDelete(
+                          row,
+                          i,
+                          isReadOnly,
+                          isFreeTextEditable
+                        )
+                      "
+                    ></i>
+                  </td>
+                </div>
+                <div *ngSwitchDefault>
+                  <td mat-cell *matCellDef="let element">
+                    {{ element[config.property] }}
+                  </td>
+                </div>
+              </div>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="desigDisplayedColumns"></tr>
+            <tr
+              mat-row
+              *matRowDef="let row; columns: desigDisplayedColumns; let i = index"
+              (dblclick)="desigRowClicked(row, i, isReadOnly, isFreeTextEditable)"
+            ></tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-12">
+          <label class="identityLabel"
+            ><i class="fas fa-hashtag text-primary"></i
+            >{{ getTranslation('Documents') }}</label
+          >
+          <table mat-table [dataSource]="docDataSrc" class="mat-elevation-z8 table-identity">
+            <ng-container
+              [matColumnDef]="config.property"
+              *ngFor="
+                let config of docDisplayedColumnsArr;
+                trackBy: trackByDocIndex
+              "
+            >
+              <th mat-header-cell *matHeaderCellDef>
+                <div
+                  *ngIf="
+                    !isReadOnly && config.property == 'editColumn';
+                    else noAddtlDoc
+                  "
+                  (click)="openDocDialog()"
+                  class="lastColumn"
+                >
+                  <i
+                    class="fas fa-plus fa-2x text-success"
+                    data-toggle="modal"
+                    data-target="#newName"
+                  ></i>
+                </div>
+                <ng-template #noAddtlDoc>
+                  {{ config.name }}
+                </ng-template>
+              </th>
+              <div [ngSwitch]="config.property">
+                <div *ngSwitchCase="'count'">
+                  <td mat-cell *matCellDef="let element; let i = index">
+                    {{ i }}
+                  </td>
+                </div>
+                <div *ngSwitchCase="'editColumn'">
+                  <td
+                    mat-cell
+                    *matCellDef="let element; let row; let i = index"
+                    data-toggle="tooltip"
+                    data-placement="top"
+                    title="Click for details"
+                    class="lastColumn"
+                  >
+                    <i
+                      class="fa fa-edit table-icon"
+                      aria-hidden="true"
+                      title="Edit"
+                      (click)="
+                        rowClickedDoc(row, i, isReadOnly, isFreeTextEditable)
+                      "
+                    ></i>
+                    <i
+                      class="fas fa-times table-icon"
+                      aria-hidden="true"
+                      title="Delete"
+                      (click)="
+                        rowClickedDocDelete(
+                          row,
+                          i,
+                          isReadOnly,
+                          isFreeTextEditable
+                        )
+                      "
+                    ></i>
+                  </td>
+                </div>
+                <div *ngSwitchDefault>
+                  <td mat-cell *matCellDef="let element">
+                    {{ element[config.property] }}
+                  </td>
+                </div>
+              </div>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="docDisplayedColumns"></tr>
+            <tr
+              mat-row
+              *matRowDef="let row; let i = index; columns: docDisplayedColumns"
+              (dblclick)="rowClickedDoc(row, i, isReadOnly, isFreeTextEditable)"
+            ></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div id="rightIdentity" class="col-xl-6 col-md-12">
+      <div class="row p-2">
+        <label class="identityLabel" style="margin-top: -4px;"
+          ><i class="fas fa-hashtag text-primary"></i
+          >{{ getTranslation('Biometric Information') }}</label
+        >
+
+        <table mat-table [dataSource]="bioMDataSrc" class="mat-elevation-z8 table-identity">
+          <ng-container
+            [matColumnDef]="config.property"
+            *ngFor="
+              let config of bioMDisplayedColumnsArr;
+              trackBy: trackByBioIndex
+            "
+          >
+            <th mat-header-cell *matHeaderCellDef>
+              <div
+                *ngIf="
+                  !isReadOnly && config.property == 'editColumn';
+                  else noAddtlBio
+                "
+                (click)="openAddBiometricDialog()"
+                class="lastColumn"
+              >
+                <i
+                  class="fas fa-plus fa-2x text-success"
+                  data-toggle="modal"
+                  data-target="#newName"
+                ></i>
+              </div>
+              <ng-template #noAddtlBio>
+                {{ config.name }}
+              </ng-template>
+            </th>
+            <div [ngSwitch]="config.property">
+              <div *ngSwitchCase="'count'">
+                <td mat-cell *matCellDef="let element; let i = index">
+                  {{ i }}
+                </td>
+              </div>
+              <div *ngSwitchCase="'editColumn'">
+                <td
+                  mat-cell
+                  *matCellDef="let element; let row; let i = index"
+                  data-toggle="tooltip"
+                  data-placement="top"
+                  title="Click for details"
+                  class="lastColumn"
+                >
+                  <i
+                    class="fas fa-edit table-icon"
+                    aria-hidden="true"
+                    title="Edit"
+                    (click)="
+                      rowClickedBioM(row, i, isReadOnly, isFreeTextEditable)
+                    "
+                  ></i>
+                  <i
+                    class="fas fa-times table-icon"
+                    aria-hidden="true"
+                    title="Delete"
+                    (click)="
+                      rowClickedDeleteBioM(
+                        row,
+                        i,
+                        isReadOnly,
+                        isFreeTextEditable
+                      )
+                    "
+                  ></i>
+                </td>
+              </div>
+              <div *ngSwitchCase="'bioMAttch'">
+                <td
+                  mat-cell
+                  *matCellDef="let element; let row; let i = index"
+                >
+                  <i
+                    *ngIf="element[config.property].length"
+                    class="fa fa-download"
+                    aria-hidden="true"
+                    title="Download"
+                    (click)="
+                      downloadBiometricAttachment(
+                        element[config.property],
+                        row,
+                        i
+                     )
+                    "
+                  >
+                  </i>
+                </td>
+              </div>
+              <div *ngSwitchDefault>
+                <td mat-cell *matCellDef="let element; let row; let i = index">
+                  {{ element[config.property] }}
+                </td>
+              </div>
+            </div>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="bioMDisplayedColumns"></tr>
+          <tr
+            mat-row
+            *matRowDef="let row; columns: bioMDisplayedColumns; let i = index"
+            (dblclick)="rowClickedBioM(row, i, isReadOnly, isFreeTextEditable)"
+          ></tr>
+        </table>
+      </div>
+
+      <div class="row p-2">
+        <label class="identityLabel"
+          ><i class="fas fa-hashtag text-primary"></i
+          >{{ getTranslation('Dates of Birth') }}</label
+        >
+        <table mat-table [dataSource]="dobsDataSrc" class="mat-elevation-z8 table-identity">
+          <ng-container
+            [matColumnDef]="config.property"
+            *ngFor="
+              let config of dobsDisplayedColumnsArr;
+              trackBy: trackByDOBIndex
+            "
+          >
+            <th mat-header-cell *matHeaderCellDef>
+              <div
+                *ngIf="
+                  !isReadOnly && config.property == 'editColumn';
+                  else noAddtlDOB
+                "
+                (click)="openDobDialog()"
+                class="lastColumn"
+              >
+                <i
+                  class="fas fa-plus fa-2x text-success"
+                  data-toggle="modal"
+                  data-target="#newName"
+                ></i>
+              </div>
+              <ng-template #noAddtlDOB>
+                {{ config.name }}
+              </ng-template>
+            </th>
+            <div [ngSwitch]="config.property">
+              <div *ngSwitchCase="'count'">
+                <td mat-cell *matCellDef="let element; let i = index">
+                  {{ i }}
+                </td>
+              </div>
+              <div *ngSwitchCase="'editColumn'">
+                <td
+                  mat-cell
+                  *matCellDef="let element; let row; let i = index"
+                  data-toggle="tooltip"
+                  data-placement="top"
+                  title="Click for details"
+                  class="lastColumn"
+                >
+                  <i
+                    class="fa fa-edit table-icon"
+                    aria-hidden="true"
+                    title="Edit"
+                    (click)="
+                      rowClickedDob(row, i, isReadOnly, isFreeTextEditable)
+                    "
+                  ></i>
+                  <i
+                    class="fas fa-times table-icon"
+                    aria-hidden="true"
+                    title="Delete"
+                    (click)="
+                      rowClickedDobDelete(
+                        row,
+                        i,
+                        isReadOnly,
+                        isFreeTextEditable
+                      )
+                    "
+                  ></i>
+                </td>
+              </div>
+              <div *ngSwitchDefault>
+                <td mat-cell *matCellDef="let element">
+                  {{ element[config.property] }}
+                </td>
+              </div>
+            </div>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="dobsDisplayedColumns"></tr>
+          <tr
+            mat-row
+            *matRowDef="let row; let i = index; columns: dobsDisplayedColumns"
+            (dblclick)="rowClickedDob(row, i, isReadOnly, isFreeTextEditable)"
+          ></tr>
+        </table>
+      </div>
+
+      <div class="row p-2">
+        <label class="identityLabel"
+          ><i class="fas fa-hashtag text-primary"></i
+          >{{ getTranslation('Places of Birth') }}</label
+        >
+
+        <table mat-table [dataSource]="pobsDataSrc" class="mat-elevation-z8 table-identity">
+          <ng-container
+            [matColumnDef]="config.property"
+            *ngFor="
+              let config of pobDisplayedColumnsArr;
+              trackBy: trackByPOBIndex
+            "
+          >
+            <th mat-header-cell *matHeaderCellDef>
+              <div
+                *ngIf="
+                  !isReadOnly && config.property == 'editColumn';
+                  else noAddtlPOB
+                "
+                (click)="openPobDialog()"
+                class="lastColumn"
+              >
+                <i
+                  class="fas fa-plus fa-2x text-success"
+                  data-toggle="modal"
+                  data-target="#newName"
+                ></i>
+              </div>
+              <ng-template #noAddtlPOB>
+                {{ config.name }}
+              </ng-template>
+            </th>
+            <div [ngSwitch]="config.property">
+              <div *ngSwitchCase="'count'">
+                <td mat-cell *matCellDef="let element; let i = index">
+                  {{ i }}
+                </td>
+              </div>
+              <div *ngSwitchCase="'editColumn'">
+                <td
+                  mat-cell
+                  *matCellDef="let element; let row; let i = index"
+                  data-toggle="tooltip"
+                  data-placement="top"
+                  title="Click for details"
+                  class="lastColumn"
+                >
+                  <i
+                    class="fa fa-edit table-icon"
+                    aria-hidden="true"
+                    title="Edit"
+                    (click)="
+                      rowClickedPob(row, i, isReadOnly, isFreeTextEditable)
+                    "
+                  ></i>
+                  <i
+                    class="fas fa-times table-icon"
+                    aria-hidden="true"
+                    title="Delete"
+                    (click)="
+                      rowClickedPobDelete(
+                        row,
+                        i,
+                        isReadOnly,
+                        isFreeTextEditable
+                      )
+                    "
+                  ></i>
+                </td>
+              </div>
+              <div *ngSwitchCase="'type'">
+                <td mat-cell *matCellDef="let element; let row">
+                  <span *ngIf="row['country']; else addrRegion">{{
+                    getTranslation('Address')
+                  }}</span>
+                  <ng-template #addrRegion
+                    ><span>{{ getTranslation('Location') }}</span></ng-template
+                  >
+                </td>
+              </div>
+              <div *ngSwitchCase="'countryRegion'">
+                <td mat-cell *matCellDef="let element; let row" class="text-break">
+                  <span *ngIf="row['country']; else addrRegion">
+                    {{
+                        row['street'] +
+                        (row['street'] ? ', ' : '') +
+                        row['city'] +
+                        (row['city'] ? ', ' : '') +
+                        row['stateProv'] +
+                        (row['stateProv'] ? ', ' : '') +
+                        row['zipCde'] +
+                        (row['zipCde'] ? ', ' : '') +
+                        row['country']
+                    }}</span
+                  >
+                  <ng-template #addrRegion
+                    ><span>{{
+                      row['region'] + ' ' + row['lng'] + ' : ' + row['lat']
+                    }}</span>
+                  </ng-template>
+                </td>
+              </div>
+              <div *ngSwitchDefault>
+                <td mat-cell *matCellDef="let element; let row">
+                  {{ row['note'] }}
+                </td>
+              </div>
+            </div>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="pobDisplayedColumns"></tr>
+          <tr
+            mat-row
+            *matRowDef="let row; let i = index; columns: pobDisplayedColumns"
+            (dblclick)="rowClickedPob(row, i, isReadOnly, isFreeTextEditable)"
+          ></tr>
+        </table>
+      </div>
+
+      <div class="row p-2">
+        <label class="identityLabel"
+          ><i class="fas fa-hashtag text-primary"></i
+          >{{ getTranslation('Addresses') }}</label
+        ><br />
+        <table mat-table [dataSource]="addrDataSrc" class="mat-elevation-z8 table-identity">
+          <ng-container
+            [matColumnDef]="config.property"
+            *ngFor="
+              let config of addrDisplayedColumnsArr;
+              trackBy: trackByAddrIndex
+            "
+          >
+            <th mat-header-cell *matHeaderCellDef>
+              <div
+                *ngIf="
+                  !isReadOnly && config.property == 'editColumn';
+                  else noAddtlAddr
+                "
+                (click)="openAddrDialog()"
+                class="lastColumn"
+              >
+                <i
+                  class="fas fa-plus fa-2x text-success"
+                  data-toggle="modal"
+                  data-target="#newName"
+                ></i>
+              </div>
+              <ng-template #noAddtlAddr>
+                {{ config.name }}
+              </ng-template>
+            </th>
+            <div [ngSwitch]="config.property">
+              <div *ngSwitchCase="'count'">
+                <td mat-cell *matCellDef="let element; let i = index">
+                  {{ i }}
+                </td>
+              </div>
+              <div *ngSwitchCase="'editColumn'">
+                <td
+                  mat-cell
+                  *matCellDef="let element; let row; let i = index"
+                  data-toggle="tooltip"
+                  data-placement="top"
+                  title="Click for details"
+                  class="lastColumn"
+                >
+                  <i
+                    class="fa fa-edit table-icon"
+                    aria-hidden="true"
+                    title="Edit"
+                    (click)="
+                      rowClickedAddr(row, i, isReadOnly, isFreeTextEditable)
+                    "
+                  ></i>
+                  <i
+                    class="fas fa-times table-icon"
+                    aria-hidden="true"
+                    title="Delete"
+                    (click)="
+                      rowClickedAddrDelete(
+                        row,
+                        i,
+                        isReadOnly,
+                        isFreeTextEditable
+                      )
+                    "
+                  ></i>
+                </td>
+              </div>
+              <div *ngSwitchCase="'type'">
+                <td mat-cell *matCellDef="let element; let row">
+                  <span *ngIf="row['country']; else addrRegion">{{
+                    getTranslation('Address')
+                  }}</span>
+                  <ng-template #addrRegion
+                    ><span>{{ getTranslation('Location') }}</span></ng-template
+                  >
+                </td>
+              </div>
+              <div *ngSwitchCase="'countryRegion'">
+                <td mat-cell *matCellDef="let element; let row" class="text-break">
+                  <span *ngIf="row['country']; else addrRegion">
+                    {{
+                      row['street'] +
+                        (row['street'] ? ', ' : '') +
+                        row['city'] +
+                        (row['city'] ? ', ' : '') +
+                        row['stateProv'] +
+                        (row['stateProv'] ? ', ' : '') +
+                        row['zipCde'] +
+                        (row['zipCde'] ? ', ' : '') +
+                        row['country']
+                    }}</span
+                  >
+                  <ng-template #addrRegion
+                    ><span>{{
+                      row['region'] + ' ' + row['lng'] + ' : ' + row['lat']
+                    }}</span>
+                  </ng-template>
+                </td>
+              </div>
+              <div *ngSwitchDefault>
+                <td mat-cell *matCellDef="let element; let row">
+                  {{ row['note'] }}
+                </td>
+              </div>
+            </div>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="addrDisplayedColumns"></tr>
+          <tr
+            mat-row
+            *matRowDef="let row; columns: addrDisplayedColumns; let i = index"
+            (dblclick)="rowClickedAddr(row, i, isReadOnly, isFreeTextEditable)"
+          ></tr>
+        </table>
+      </div>
+
+      <div class="row p-2">
+        <label class="identityLabel"
+          ><i class="fas fa-hashtag text-primary"></i
+          >{{ getTranslation('Features') }}</label
+        >
+        <table mat-table [dataSource]="featDataSrc" class="mat-elevation-z8 table-identity">
+          <ng-container
+            [matColumnDef]="config.property"
+            *ngFor="
+              let config of featDisplayedColumnsArr;
+              trackBy: trackByFeatsIndex
+            "
+          >
+            <th mat-header-cell *matHeaderCellDef>
+              <div
+                *ngIf="
+                  !isReadOnly && config.property == 'editColumn';
+                  else noAddtlFeat
+                "
+                (click)="openFeatureDialog()"
+                class="lastColumn"
+              >
+                <i
+                  class="fas fa-plus fa-2x text-success"
+                  data-toggle="modal"
+                  data-target="#newName"
+                ></i>
+              </div>
+              <ng-template #noAddtlFeat>
+                {{ config.name }}
+              </ng-template>
+            </th>
+            <div [ngSwitch]="config.property">
+              <div *ngSwitchCase="'position'">
+                <td mat-cell *matCellDef="let element; let i = index">
+                  {{ i }}
+                </td>
+              </div>
+              <div *ngSwitchCase="'editColumn'">
+                <td
+                  mat-cell
+                  class="lastColumn"
+                  *matCellDef="let element; let row; let i = index"
+                  class="lastColumn"
+                  data-toggle="tooltip"
+                  data-placement="top"
+                  title="Click for details"
+                >
+                  <i
+                    class="fa fa-edit table-icon"
+                    aria-hidden="true"
+                    title="Edit"
+                    (click)="
+                      rowClickedFeat(row, i, isReadOnly, isFreeTextEditable)
+                    "
+                  ></i>
+                  <i
+                    class="fas fa-times table-icon"
+                    aria-hidden="true"
+                    title="Delete"
+                    (click)="
+                      rowClickedFeatDelete(
+                        row,
+                        i,
+                        isReadOnly,
+                        isFreeTextEditable
+                      )
+                    "
+                  ></i>
+                </td>
+              </div>
+              <div *ngSwitchDefault>
+                <td mat-cell *matCellDef="let element">
+                  {{ element[config.property] }}
+                </td>
+              </div>
+            </div>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="featDisplayedColumns"></tr>
+          <tr
+            mat-row
+            *matRowDef="let row; columns: featDisplayedColumns; let i = index"
+            (dblclick)="rowClickedFeat(row, i, isReadOnly, isFreeTextEditable)"
+          ></tr>
+        </table>
+      </div>
+
+      <div class="row p-2" style="margin-top: 32px">
+        <div class="col-md-12 m-0 p-0">
+          <mat-form-field appearance="outline">
+            <mat-label>{{ getTranslation('Identity Notes') }}</mat-label>
+            <textarea
+              matInput
+              [ngClass]="{'text-right': lang.toLocaleLowerCase() == 'ar'}"
+              [readonly]="!isFreeTextEditable"
+              formControlName="idComment"
+            ></textarea>
+          </mat-form-field>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>

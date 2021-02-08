@@ -1,0 +1,48 @@
+<div
+  *ngIf="authenticated"
+  class="collapse navbar-collapse ml-auto"
+  id="navbarSupportedContent"
+>
+  <ul class="navbar-nav ml-auto">
+    <li class="nav-item dropdown">
+      <div class="d-flex">
+        <div class="user-info d-flex flex-column text-left">
+          <span class="header-personal-info font-weight-bold">{{
+            userName
+          }}</span>
+          <span class="header-personal-info personal-role">{{ dRole }}</span>
+        </div>
+
+        <button
+          mat-icon-button
+          [matMenuTriggerFor]="profileMenu"
+          aria-label="Example icon-button with a menu"
+        >
+          <i class="fa fa-caret-down mr-2" aria-hidden="true"></i>
+        </button>
+
+        <mat-menu #profileMenu="matMenu" yPosition="below">
+          <button
+            mat-menu-item
+            *ngFor="let role of userRolesArr"
+            [value]="role"
+            (click)="selectRole(role)"
+          >
+            {{ role }}
+          </button>
+          <hr />
+          <button mat-menu-item routerLink="/profile">
+            <i class="fa fa-user" aria-hidden="true"></i> Profile
+          </button>
+          <button mat-menu-item>
+            <i class="fa fa-cog" aria-hidden="true"></i> Settings
+          </button>
+          <button mat-menu-item><i class="fa fa-sign-out"></i> Logout</button>
+        </mat-menu>
+      </div>
+    </li>
+  </ul>
+</div>
+<span *ngIf="!authenticated" (click)="login()">
+  <button mat-raised-button>{{ 'Login' | translate }}</button>
+</span>

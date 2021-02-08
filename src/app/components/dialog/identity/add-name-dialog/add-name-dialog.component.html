@@ -1,0 +1,154 @@
+<!-- Modal Name-->
+<form class="modal-container" [formGroup]="nameDialogForm" (ngSubmit)="submit(nameDialogForm)">
+  <div class="modal-content">
+    <app-custom-modal-header
+      [modalTitle]="translations[lang][data.title]"
+      [modalIcon]="data.isReadOnly"
+    >
+    </app-custom-modal-header>
+
+    <div class="modal-body">
+      <div class="row mt-3">
+        <div class="col-md-12">
+          <mat-form-field appearance="outline">
+            <mat-label>{{ translations[lang]['Name type'] }}</mat-label>
+            <mat-select
+              [disabled]="data.isReadOnly || data.isTranslationMode"
+              formControlName="nameType"
+              name="nameType"
+              id="nameType"
+            >
+              <mat-option *ngIf="otherNameType == true; else elseBlockOther" [value]="data.nameType">{{ data.nameType }}</mat-option>
+
+              <ng-template #elseBlockOther>
+                <div *ngIf="fullNameFlag == true; else elseBlock">
+
+                  <div *ngIf="data.editNameType ; else elseBlockCreate">
+                    <mat-option
+                      [disabled]="data.isReadOnly || data.nameTypeArr.includes(data.nameType[tmp])"
+                      *ngFor="let tmp of getArrOfKeys(data.nameType)"
+                      [value]="data.nameType[tmp]"
+                    >
+                      {{ data.nameType[tmp] }}
+                    </mat-option>
+                  </div>
+                  <ng-template #elseBlockCreate>
+                    <mat-option [disabled]="data.isReadOnly" value="FULL_NAME">{{
+                      translations[lang]['Full Name']
+                      }}</mat-option>
+                  </ng-template>
+
+                </div>
+
+                <ng-template #elseBlock>
+                  <mat-option [disabled]="data.isReadOnly">{{
+                    translations[lang]['Select Name type']
+                    }}
+                  </mat-option>
+                  <mat-option
+                    [disabled]="data.isReadOnly || (data.nameTypeArr.includes(data.nameType[tmp]) || (fullNameValue == data.nameType[tmp] && data.nameTypeArr.length > 0))"
+                    *ngFor="let tmp of getArrOfKeys(data.nameType)"
+                    [value]="data.nameType[tmp]"
+                  >
+                    {{ data.nameType[tmp] }}
+                  </mat-option>
+                </ng-template>
+              </ng-template>
+
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="col-md-12">
+          <mat-form-field appearance="outline">
+            <mat-label>{{ translations[lang]['Order'] }}</mat-label>
+
+            <mat-select
+              [disabled]="data.isReadOnly || data.isTranslationMode"
+              formControlName="order"
+              name="order"
+              id="order"
+            >
+                <div *ngIf="getNameTypeValue == 'FULL_NAME' else elseBlockOrder">
+                  <mat-option [value]="1">1</mat-option>
+                </div>
+                <ng-template
+                  #elseBlockOrder
+                >
+                <mat-option [disabled]="data.isReadOnly">{{
+                  translations[lang]['Select order']
+                  }}</mat-option>
+                  <mat-option
+                    [disabled]="data.isReadOnly || data.ordNumUsedArr.includes(i + 1)"
+                    *ngFor="let tmp of getArrOfKeys(data.nameType); let i = index"
+                    [value]="i + 1"
+                  >{{ i + 1 }}
+                  </mat-option>
+                </ng-template>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <div class="col-md-12">
+          <mat-form-field appearance="outline">
+            <mat-label>{{ translations[lang]['Script'] }}</mat-label>
+            <mat-select
+              [disabled]="data.isReadOnly || data.isTranslationMode"
+              formControlName="script"
+              name="script"
+              id="script"
+            >
+              <mat-option *ngIf="data.editScript" [value]="data.editScript">{{ data.editScript }}</mat-option>
+              <mat-option [disabled]="data.isReadOnly">{{
+                translations[lang]['Select script']
+                }}</mat-option>
+              <mat-option
+                (click)="onSetDirectionState(tmp)"
+                [disabled]="data.isReadOnly"
+                *ngFor="let tmp of getArrOfKeys(data.script); let i = index"
+                [value]="data.script[tmp]"
+              >{{ data.script[tmp] }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <div class="col-md-12">
+          <mat-form-field appearance="outline">
+            <mat-label>{{ translations[lang]['Name'] }}</mat-label>
+            <input
+              matInput
+              [ngClass]="{'text-right': (txtDirectionState == 'arabic') || (lang.toLocaleLowerCase() == 'ar')}"
+              formControlName="name"
+              [readonly]="data.isReadOnly"
+            />
+          </mat-form-field>
+        </div>
+        <div *ngIf="isInvalid">
+          <strong style="color: red;">{{
+            translations[lang]['Please fill out all fields']
+            }}</strong>
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="modal-footer">
+      <div class="d-flex justify-content-between">
+        <button
+          type="button"
+          (click)="onNoClick()"
+          class="btn btn-secondary"
+          data-dismiss="modal"
+        >
+          {{ translations[lang]['Cancel'] }}
+        </button>
+        <div *ngIf="!data.isReadOnly">
+          <button type="submit" class="btn btn-primary">
+            {{ translations[lang]['Save'] }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>

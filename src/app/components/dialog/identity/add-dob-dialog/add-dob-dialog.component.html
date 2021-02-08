@@ -1,0 +1,191 @@
+<form [formGroup]="dobDialogform" (ngSubmit)="submit(dobDialogform)">
+  <div class="modal-content">
+    <app-custom-modal-header [modalTitle]="translations[lang][dobData.title]">
+    </app-custom-modal-header>
+
+    <div class="modal-body">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="row">
+            <mat-radio-group id="dobType" formControlName="dobType">
+              <mat-radio-button class="example-radio-button p-2" *ngFor="let chosenDate of dte; let i = index"
+                [value]="chosenDate">
+                <!--  [value]="chosenDate"-->
+                {{ translations[lang][chosenDate] || chosenDate }}
+              </mat-radio-button>
+            </mat-radio-group>
+          </div>
+
+          <div class="row">
+            <div class="col-md-12" *ngIf="
+                dobDialogform.controls.dobType.value == 'Specific';
+                else dteRange
+              ">
+              <div class="form-row">
+                <mat-form-field appearance="outline">
+                  <mat-label>{{ translations[lang]['Date'] }}</mat-label>
+                  <input
+                   [ngClass]="{'text-right': lang.toLocaleLowerCase() == 'ar'}"
+                   matInput 
+                   formControlName="dobSpecDte"
+                   [matDatepicker]="specDtepicker" 
+                   [max]="criteriaDate"/>
+                  <mat-datepicker-toggle matSuffix [for]="specDtepicker"></mat-datepicker-toggle>
+                  <mat-datepicker #specDtepicker></mat-datepicker>
+                </mat-form-field>
+              </div>
+              <div *ngIf="
+                  dobDialogform.errors?.specDteErr &&
+                  dobDialogform.controls.dobSpecDte.value == 'Specific' &&
+                  (dobDialogform.controls.dobSpecDte.touched ||
+                    dobDialogform.controls.dobSpecDte.dirty)
+                ">
+                {{
+                  translations[lang]['Please enter a specific date of birth']
+                }}
+              </div>
+            </div>
+
+            <ng-template #dteRange>
+              <div class="col-md-12">
+                <div class="row">
+                  <mat-radio-group id="dobTypSubset" formControlName="dobSubset">
+                    <mat-radio-button value="subset" class="p-2">
+                      {{ translations[lang]['Subset'] || 'Subset' }}
+                    </mat-radio-button>
+                    <mat-radio-button value="fRange" class="p-2">
+                      {{ translations[lang]['Full range'] || 'Full range'}}
+                    </mat-radio-button>
+                  </mat-radio-group>
+                </div>
+                <div class="row">
+                  <div *ngIf="
+                      dobDialogform.controls.dobSubset.value == 'subset';
+                      then subset;
+                      else fullRange
+                    "></div>
+
+                  <ng-template #subset>
+                    <div class="col-md-12">
+                      <div class="form-row">
+                        <mat-form-field appearance="outline">
+                          <mat-select formControlName="dobSubsetType" [disabled]="dobData.isTranslationMode">
+                            <mat-option value="null" disabled>{{
+                              translations[lang]['Choose subset format'] || 'Choose subset format'
+                              }}</mat-option>
+                            <mat-option value="mmyyyy">
+                              MM/YYYY
+                            </mat-option>
+                            <mat-option value="yyyy">
+                              YYYY
+                            </mat-option>
+                          </mat-select>
+                        </mat-form-field>
+                      </div>
+                      <!-- dateFormatYYYY-->
+                      <div class="form-row" *ngIf="dobDialogform.controls.dobSubsetType.value == 'yyyy'">
+                        <mat-form-field appearance="outline">
+                          <input 
+                            [ngClass]="{'text-right': lang.toLocaleLowerCase() == 'ar'}"
+                            matInput 
+                            dateFormatYYYY
+                            formControlName="dobSubsetDte" 
+                            [matDatepicker]="dp2" 
+                            [max]="criteriaDate" 
+                            />
+                          <mat-datepicker-toggle matSuffix [for]="dp2"></mat-datepicker-toggle>
+                          <mat-datepicker #dp2></mat-datepicker>
+                        </mat-form-field>
+                      </div>
+                      <!-- dateFormatMMYYYY-->
+                      <div class="form-row" *ngIf="
+                          dobDialogform.controls.dobSubsetType.value == 'mmyyyy'
+                        ">
+                        <mat-form-field appearance="outline">
+                          <input 
+                            matInput 
+                            [ngClass]="{'text-right': lang.toLocaleLowerCase() == 'ar'}"
+                            dateFormatMMYYYY 
+                            formControlName="dobSubsetDte"
+                            [matDatepicker]="dp3" 
+                            [max]="criteriaDate"
+                            />
+                          <mat-datepicker-toggle matSuffix [for]="dp3"></mat-datepicker-toggle>
+                          <mat-datepicker #dp3></mat-datepicker>
+                        </mat-form-field>
+                      </div>
+                    </div>
+                  </ng-template>
+                  <ng-template #fullRange>
+                    <div class="col-md-12">
+                      <div class="form-row">
+                        <mat-form-field appearance="outline">
+                          <mat-label>{{
+                            translations[lang]['From range'] || 'From range'
+                            }}</mat-label>
+                          <input 
+                            matInput 
+                            [ngClass]="{'text-right': lang.toLocaleLowerCase() == 'ar'}"
+                            formControlName="dobFrom" 
+                            [matDatepicker]="picker"
+                            id="fromDte" 
+                            [max]="criteriaDate"/>
+                          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                          <mat-datepicker #picker></mat-datepicker>
+                        </mat-form-field>
+                      </div>
+
+                      <div class="form-row">
+                        <mat-form-field appearance="outline">
+                          <mat-label>{{
+                            translations[lang]['To range'] || 'To range'
+                            }}</mat-label>
+                          <input
+                            matInput
+                            [ngClass]="{'text-right': lang.toLocaleLowerCase() == 'ar'}"
+                            formControlName="dobTo" 
+                            [matDatepicker]="toDtepicker" 
+                            id="toDte" 
+                            [max]="criteriaDate"/>
+                          <mat-datepicker-toggle matSuffix [for]="toDtepicker"></mat-datepicker-toggle>
+                          <mat-datepicker #toDtepicker></mat-datepicker>
+                        </mat-form-field>
+                      </div>
+                    </div>
+                  </ng-template>
+                </div>
+              </div>
+            </ng-template>
+          </div>
+
+          <div class="row px-2">
+            <mat-form-field appearance="outline">
+              <mat-label>{{ translations[lang]['Notes'] }}</mat-label>
+              <textarea 
+                matInput 
+                [ngClass]="{'text-right': lang.toLocaleLowerCase() == 'ar'}"
+                [readOnly]="dobData.isReadOnly" 
+                id="dobNote" 
+                formControlName="dobNote"
+                >
+              </textarea>
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer d-flex justify-content-center">
+      <div class="d-flex justify-content-between">
+        <button type="button" (click)="onNoClick()" class="btn btn-secondary" data-dismiss="modal">
+          {{ translations[lang]['Cancel'] }}
+        </button>
+        <div *ngIf="!dobData.isReadOnly">
+          <button type="submit" class="btn btn-primary">
+            {{ translations[lang]['Save'] }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+<!-- end modal dob -->

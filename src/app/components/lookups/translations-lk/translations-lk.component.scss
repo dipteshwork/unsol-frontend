@@ -1,0 +1,56 @@
+.translations {
+  display: flex;
+  flex-direction: column;
+  height: calc(100% - 30px);
+}
+
+.gray {
+  background-color: #f5f5f5f5;
+}
+
+.table-custom-responsive {
+  display: flex;
+  overflow: auto;
+  height: 100%;
+}
+
+table {
+  width: 100%;
+  box-shadow: none;
+  &.rtl {
+    text-align: right;
+    .mat-header-cell {
+      text-align: right;
+    }
+  }
+}
+
+.table-show {
+  empty-cells: show;
+}
+
+.mat-header-cell {
+  color: black;
+  font-weight: bold;
+  background-color: #e7e7e7;
+}
+
+.mat-cell {
+  color: black;
+}
+
+.lastColumn {
+  text-align: right !important;
+}
+
+.mat-paginator {
+  &.rtl {
+    direction: ltr;
+    display: flex;
+  }
+}
+
+::ng-deep .mat-dialog-container{
+  padding: 0 !important;
+  border-radius: 12px !important;
+}

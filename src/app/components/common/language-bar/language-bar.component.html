@@ -1,0 +1,12 @@
+<div class="lang-bar">
+  <a
+    *ngFor="let curLang of langArr"
+    [ngClass]="{
+                'lang-item': true,
+                active: curLang.toLowerCase() == lang
+              }"
+    (click)="changeLang(curLang)"
+  >
+    {{ curLang }}
+  </a>
+</div>

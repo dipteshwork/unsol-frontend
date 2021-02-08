@@ -1,0 +1,46 @@
+mat-dialog-container {
+  padding: 0;
+  border-radius: 5px;
+}
+
+.language-dropdown {
+  border: ridge;
+  border-radius: 6px;
+}
+
+.ml-2 {
+  margin-left: 20px;
+}
+
+mat-label {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.role-section {
+  p {
+    margin: 0;
+  }
+}
+
+label {
+  font-weight: bold;
+
+  &.invalid {
+    color: red;
+  }
+}
+.mat-form-field.rtl {
+  input {
+    text-align: right;
+  }
+}
+.mat-form-field {
+  width: 100%;
+}
+.modal-footer.rtl {
+  flex-direction: row-reverse;
+  .btn-secondary {
+    margin: 0 0 0 42px;
+  }
+}

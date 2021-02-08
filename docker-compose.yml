@@ -1,0 +1,16 @@
+version: "3"
+
+services:
+  client:
+    build: .
+    container_name: sc-sanctions-proj
+    image: sc-sanctions-proj
+    ports:
+      - 4200:4200
+    volumes:
+      - .:/workspace
+    command: >
+      bash -c "
+        npm install &&
+        ng serve --port 4200 --host=0.0.0.0 --no-open
+      "

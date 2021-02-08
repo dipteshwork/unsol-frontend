@@ -1,0 +1,40 @@
+<form [formGroup]="statusRemovedDialogForm" (ngSubmit)="onSubmit(statusRemovedDialogForm, $event)">
+  <!--  [formGroup]="newEntryDialogform" (ngSubmit)="submit(newEntryDialogform)"-->
+  <h1 mat-dialog-title>{{data.title}}</h1>
+
+  <mat-dialog-content>
+    <label for="removedStatusDte">Removed status date</label>
+    <input formControlName="removedStatusDte" type="date" id="removedStatusDte" />
+    <!-- 
+          <mat-form-field>
+              <label for="removedStatusDte">Removed status date</label>
+                    <input  formControlName="removedStatusDte" matInput [matDatepicker]="picker" readonly placeholder="Choose a date" id="removedStatusDte"/>
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>    
+                    <div *ngIf="statusRemovedDialogForm.get('removedStatusDte').errors && statusRemovedDialogForm.get('removedStatusDte').dirty"> Removed date rrequired. </div>  
+                      
+        </mat-form-field> 
+        -->
+
+
+    <!--     
+        <mat-form-field> </mat-form-field> -->
+    <label for="language">Removed status reason</label>
+    <textarea formControlName="removedStatusReason" id="removedStatusReason" class="textarea1" cols="25"
+      rows="2"></textarea>Removed reason
+    <div
+      *ngIf="statusRemovedDialogForm.get('removedStatusReason').dirty && statusRemovedDialogForm.get('removedStatusReason').errors">
+      Status reason required. </div>
+
+
+
+
+
+
+  </mat-dialog-content>
+
+  <div mat-dialog-actions>
+    <button mat-button type="button" (click)="onNoClick()">Cancel</button>
+    <button mat-button type="submit">Create</button>
+  </div>
+</form>

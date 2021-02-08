@@ -1,0 +1,33 @@
+@import "../../../../styles/variables.scss";
+// @import "/src/styles/variables.scss";
+
+.modal-header {
+  padding: 1rem 2rem;
+  min-height: 80px;
+  align-items: center;
+  background: $bg-secondary;
+  color: $white;
+  &.rtl {
+    flex-direction: row-reverse;
+    .close {
+      margin: 0;
+    }
+  }
+  .modal-title {
+    align-items: center;
+  }
+  .close {
+    width: 20px !important;
+    background: $bg-secondary;
+    padding: 0;
+    border-radius: 50%;
+    color: $white;
+  }
+  .close:hover {
+    background: $bg-secondary;
+  }
+  .close:focus {
+    background: $bg-secondary;
+    outline: none;
+  }
+}

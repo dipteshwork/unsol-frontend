@@ -1,0 +1,28 @@
+<mat-tab-group #entryTabs class="entry-tabs" [selectedIndex]="activeTab">
+  <mat-tab matTooltip="testme">
+    <ng-template mat-tab-label>
+      <span
+        (click)="handleNavigation('/security/notification/email-setting')"
+        >{{ getTranslation('Email Settings') }}</span
+      >
+    </ng-template>
+  </mat-tab>
+  <mat-tab matTooltip="testme">
+    <ng-template mat-tab-label>
+      <span
+        (click)="handleNavigation('/security/notification/receiver-setting')"
+        >{{ getTranslation('Receiver Settings') }}</span
+      >
+    </ng-template>
+  </mat-tab>
+  <mat-tab matTooltip="testme">
+    <ng-template mat-tab-label>
+      <span
+        (click)="handleNavigation('/security/notification/other-setting')"
+        >{{ getTranslation('Other') }}</span
+      >
+    </ng-template>
+  </mat-tab>
+</mat-tab-group>
+
+<router-outlet></router-outlet>

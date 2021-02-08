@@ -1,0 +1,49 @@
+table {
+  width: 100%;
+}
+
+.table-show {
+  empty-cells: show;
+}
+
+.mat-table.table-identity .mat-row .mat-cell {
+  color: black;
+  padding: 5px 8px !important;
+
+  &.lastColumn {
+    min-width: 75px;
+  }
+}
+
+.lastColumn {
+  text-align: right !important;
+}
+
+caption.identityLabel {
+  padding: 10px;
+  font-weight: bold;
+  font-size: 0.8em;
+  caption-side: top;
+}
+
+.d-flex tr:nth-child(even) {
+  background-color: #eee;
+}
+
+.snd-back {
+  z-index: 2;
+}
+
+.form-select.disabled {
+  background-color: #e9ecef;
+}
+
+.table-icon {
+  margin-left: 6px;
+  margin-right: 6px;
+  cursor: pointer;
+}
+
+.fa-plus {
+  cursor: pointer !important;
+}

@@ -1,0 +1,137 @@
+<form [formGroup]="biometricDialogform" (ngSubmit)="submit(biometricDialogform)">
+  <div class="modal-content">
+    <app-custom-modal-header [modalTitle]="translations[lang][data.title]">
+    </app-custom-modal-header>
+
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="col-md-6 pr-3">
+          <div class="form-row">
+            <mat-form-field appearance="outline">
+              <mat-label>{{
+                translations[lang]['Biometric type'] || 'Biometric type'
+                }}</mat-label>
+              <mat-select [disabled]="data.isReadOnly || data.isTranslationMode" formControlName="bioMType" name="biometricType"
+                id="biometricType" required='true'>
+                <mat-option [value]="null">{{
+                  translations[lang]['Select script'] || 'Select script'
+                  }}</mat-option>
+                <mat-option *ngFor="let bioM of activeBiometricTypes" [value]="bioM[data.lang]['biometricTypeName']"
+                  [disabled]="data.biometricTypesUsedArr.includes(bioM[data.lang]['biometricTypeName'])">
+                    {{ bioM[data.lang]['biometricTypeName'] }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div class="form-row">
+            <mat-form-field appearance="outline">
+              <mat-label>{{ translations[lang]['Value'] || 'Value'}}</mat-label>
+              <input [ngClass]="{'text-right': lang.toLocaleLowerCase() == 'ar'}" matInput [readOnly]="!data.isFreeTextEditable" formControlName="bioMVal" id="bioMVal"
+                required='true' />
+            </mat-form-field>
+            <div *ngIf="
+                biometricDialogform.errors?.bioMInvalid &&
+                (biometricDialogform.touched || biometricDialogform.dirty)
+              " class="text-danger">
+              {{
+                translations[lang][
+                  'Please enter a biometric type as well as a value'
+                ] || 'Please enter a biometric type as well as a value'
+              }}
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <label for="bioMAttch">{{
+            translations[lang]['File attachment'] || 'File attachment'
+          }}</label>
+          <div class="input-group file-attachment-wrapper">
+            <div (click)="onClickInput()" class="input-wrapper">
+              <div class="input-overlay {{ data.isReadOnly ? 'disabled' : '' }}">
+                <span>{{ translations[lang]['Attach file'] || 'Attach file' }}</span>
+              </div>
+              <input [ngClass]="{'text-right': lang.toLocaleLowerCase() == 'ar'}" [readOnly]="!data.isFreeTextEditable" id="bioMAttch" required='true' type="file"
+                placeholder="Fileattachmnt" (change)="onFileChange($event)" #fileInput class="form-control"
+                accept=".pdf, .gif, .jpg, .png" multiple />
+            </div>
+            <button type="button" class="btn btn-secondary" (click)="clearFile()" [disabled]="data.isReadOnly">
+              {{ translations[lang]['Clear file'] || 'Clear file' }}
+            </button>
+          </div>
+          <div *ngIf="
+                biometricDialogform.errors?.bioMInvalid &&
+                (biometricDialogform.touched || biometricDialogform.dirty)
+              " class="text-danger">
+            {{
+                translations[lang][
+                  'Please enter a biometric attachment'
+                ] || 'Please enter a biometric attachment'
+              }}
+          </div>
+          <p>{{ translations[lang]['Accepted file types are'] || 'Accepted file types are' }} .pdf, .gif, .jpg and .png</p>
+
+          <div class="buttons-wrapper">
+          </div>
+          <div class="mt-4">
+            <mat-table class="bio-dialog-table" #table [dataSource]="bioMetricDataSrc">
+              <ng-container matColumnDef="count">
+                <mat-header-cell *matHeaderCellDef> #</mat-header-cell>
+                <mat-cell> s</mat-cell>
+              </ng-container>
+              <ng-container matColumnDef="filename">
+                <mat-header-cell *matHeaderCellDef>
+                  {{ translations[lang]['File name'] || 'File name'}}</mat-header-cell>
+                <mat-cell *matCellDef="let element; let i = index">
+                  {{ element['filename'] }}</mat-cell>
+              </ng-container>
+              <!-- Weight Column -->
+              <ng-container matColumnDef="filesize">
+                <mat-header-cell *matHeaderCellDef>{{ translations[lang]['File size'] || 'File size' }}
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element; let i = index">
+                  {{ element['filesize'] }}</mat-cell>
+              </ng-container>
+              <ng-container matColumnDef="delete">
+                <mat-header-cell *matHeaderCellDef>
+                  {{ translations[lang]['Delete file'] || 'Delete file'}}</mat-header-cell>
+                <mat-cell *matCellDef="let element; let row; let i = index">
+                  <i class="fas fa-times table-icon" (click)="deleteFiles($event, row, i)" *ngIf="!data.isReadOnly"></i>
+                </mat-cell>
+              </ng-container>
+              <ng-container matColumnDef="download">
+                <mat-header-cell *matHeaderCellDef>
+                  {{ translations[lang]['Download file'] || 'Download file'}}</mat-header-cell>
+                <mat-cell *matCellDef="let element; let row; let i = index">
+                  <i class="fa fa-angle-down" aria-hidden="true" title="Download"
+                    (click)="downloadFile(row['fileId'], row, i)"></i>
+                </mat-cell>
+              </ng-container>
+              <mat-header-row *matHeaderRowDef="bioMDisplayedColumns; sticky: true"></mat-header-row>
+              <mat-row *matRowDef="let row; columns: bioMDisplayedColumns"></mat-row>
+            </mat-table>
+          </div>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="col-sm-12">
+          <mat-form-field appearance="outline">
+            <mat-label>{{ translations[lang]['Notes'] || 'Notes' }}</mat-label>
+            <textarea matInput [ngClass]="{'text-right': lang.toLocaleLowerCase() == 'ar'}" formControlName="bioMNote" required='true'></textarea>
+          </mat-form-field>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer d-flex justify-content-center">
+      <div class="d-flex justify-content-between">
+        <button type="button" (click)="onNoClick()" class="btn btn-secondary" data-dismiss="modal">
+          {{ translations[lang]['Cancel'] || 'Cancel' }}
+        </button>
+        <div *ngIf="!data.isReadOnly">
+          <button type="submit" class="btn btn-primary">
+            {{ translations[lang]['Save'] || 'Save' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>

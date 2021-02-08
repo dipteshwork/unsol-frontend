@@ -1,0 +1,126 @@
+<nav class="navbar navbar-expand-lg navbar-light m-0 p-2">
+  <h4>{{ getTranslation('Translations') }}</h4>
+</nav>
+
+<div class="col-md-12 p-0 translations">
+  <div class="control-wrapper">
+    <app-custom-search-box (onFilterFunc)="applyFilter($event)">
+    </app-custom-search-box>
+
+    <div class="control-wrapper__right">
+      <button
+        type="button"
+        (click)="newTranslationTyp()"
+        class="btn bg-transparent navbar-brand"
+        data-toggle="modal"
+        data-target="#newEntry"
+      >
+        <i class="fas fa-plus-circle"></i
+        ><span class="h6" [ngClass]="appLang !== 'ar' ? 'pl-2' : 'pr-2'">{{ getTranslation('Create New') }}</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="table-custom-responsive">
+    <table [ngClass]="appLang === 'ar' && 'rtl'"
+      mat-table
+      [dataSource]="dataSource"
+      matSort
+      class="mat-elevation-z8 table-strip"
+    >
+      <ng-container matColumnDef="position">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          No
+        </th>
+        <td mat-cell *matCellDef="let element; let i = index">{{ paginator._pageIndex * paginator.pageSize + i + 1 }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="en">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{ getTranslation('English') }}
+        </th>
+        <td mat-cell *matCellDef="let element">
+            {{ element.en }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="ch">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{ getTranslation('Chinese') }}
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{ element.ch }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="fr">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{ getTranslation('French') }}
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{ element.fr }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="ar">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{ getTranslation('Arabic') }}
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{ element.ar }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="ru">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{ getTranslation('Russian') }}
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{ element.ru }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="sp">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{ getTranslation('Spanish') }}
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{ element.sp }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="delete">
+        <th mat-header-cell *matHeaderCellDef>{{ getTranslation('Delete') }}</th>
+        <td mat-cell class="description-cell" *matCellDef="let element; let i = index">
+          <i
+            class="fa fa-trash table-icon"
+            aria-hidden="true"
+            title="Delete"
+            (click)="openDeleteTranslationsTypDialog(element.en)"
+          ></i>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr
+        mat-row
+        *matRowDef="
+          let row;
+          let i = index;
+          let even = even;
+          columns: displayedColumns
+        "
+        [ngClass]="{ gray: even }"
+        (dblclick)="rowClicked(row, i)"
+      ></tr>
+    </table>
+  </div>
+  <mat-paginator
+    [ngClass]="appLang === 'ar' && 'rtl'"
+    [length]="dataSource.length"
+    [pageSize]="10"
+    [pageSizeOptions]="[5, 10, 25]"
+    showFirstLastButtons
+  >
+  </mat-paginator>
+</div>

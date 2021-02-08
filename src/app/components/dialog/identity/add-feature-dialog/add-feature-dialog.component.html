@@ -1,0 +1,70 @@
+<!-- Modal Feature-->
+<form [formGroup]="featDialogform" (ngSubmit)="submit(featDialogform)">
+  <div class="modal-content">
+    <app-custom-modal-header
+      [modalTitle]="translations[lang][data.title]"
+    >
+    </app-custom-modal-header>
+
+    <div class="modal-body">
+      <div class="form-row">
+        <mat-form-field appearance="outline">
+          <mat-label>{{ translations[lang]["Feature type"] || "Feature type"}}</mat-label>
+          <mat-select
+            [disabled]="data.isReadOnly || data.isTranslationMode"
+            formControlName="featureType"
+            name="featureType"
+            id="featureType">
+            <mat-option [value]="null">{{ translations[lang]["Select feature"] || "Select feature" }}</mat-option>
+            <mat-option *ngFor="let ftmp of data.featureTypes;" [value]="ftmp[data.lang]">{{ ftmp[data.lang] }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div class="form-row">
+        <mat-form-field appearance="outline">
+          <mat-label>{{ translations[lang]["Value"] || "Value" }}</mat-label>
+          <input
+           matInput 
+           [ngClass]="{'text-right': lang.toLocaleLowerCase() == 'ar'}"
+           [readonly]="!data.isFreeTextEditable" 
+           formControlName="fValue" 
+           id="fValue"> 
+           <br />
+        </mat-form-field>
+      </div>
+      <div
+        *ngIf="featDialogform.errors?.fErrVals && (featDialogform.controls.featureType.touched || featDialogform.controls.featureType.dirty)">
+        {{ translations[lang]["Please enter data into both Feature Type as well as feature value"] || "Please enter data into both Feature Type as well as feature value"}}</div>
+      <div class="form-row">
+        <mat-form-field appearance="outline">
+          <mat-label>{{ translations[lang]["Notes"] }}</mat-label>
+          <textarea
+            matInput
+            [ngClass]="{'text-right': lang.toLocaleLowerCase() == 'ar'}"
+            [readonly]="data.isReadOnly && !data.isFreeTextEditable"
+            formControlName="fNotes"
+            id="fNotes"
+          ></textarea>
+        </mat-form-field>
+      </div>
+    </div>
+    <div class="modal-footer d-flex justify-content-center">
+      <div class="d-flex justify-content-between">
+        <button
+          type="button"
+          (click)="onNoClick()"
+          class="btn btn-secondary"
+          data-dismiss="modal"
+        >
+          {{ translations[lang]['Cancel'] }}
+        </button>
+        <div *ngIf="!data.isReadOnly">
+          <button type="submit" class="btn btn-primary">
+            {{ translations[lang]['Save'] }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>

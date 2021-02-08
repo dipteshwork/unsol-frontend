@@ -1,0 +1,46 @@
+<form
+  [formGroup]="statusDelistedDialogForm"
+  (ngSubmit)="onSubmit(statusDelistedDialogForm, $event)"
+>
+  <h1 mat-dialog-title>{{ data.title }}</h1>
+
+  <mat-dialog-content>
+    <label for="delistedStatusDte">Disabled status date</label>
+    <input
+      formControlName="delistedStatusDte"
+      type="date"
+      [max]="tomorrow"
+      id="delistedStatusDte"
+    />
+    <div
+      *ngIf="
+        statusDelistedDialogForm.get('delistedStatusDte').errors &&
+        statusDelistedDialogForm.get('delistedStatusDte').dirty
+      "
+    >
+      Delisted status date required.
+    </div>
+    <label for="delistedStatusPRelease">Press release</label>
+    <textarea
+      formControlName="delistedStatusPRelease"
+      id="delistedStatusPRelease"
+      class="textarea1"
+      cols="25"
+      rows="2"
+    ></textarea
+    >Press release
+    <div
+      *ngIf="
+        statusDelistedDialogForm.get('delistedStatusPRelease').dirty &&
+        statusDelistedDialogForm.get('delistedStatusPRelease').errors
+      "
+    >
+      Press release required.
+    </div>
+  </mat-dialog-content>
+
+  <div mat-dialog-actions>
+    <button mat-button type="button" (click)="onNoClick()">Cancel</button>
+    <button mat-button type="submit">Save</button>
+  </div>
+</form>

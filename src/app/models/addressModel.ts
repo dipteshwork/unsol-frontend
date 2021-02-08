@@ -1,0 +1,29 @@
+export interface AddressData {
+  street: string;
+  city: string;
+  title: string;
+  stateProv: string;
+  zipCde: string;
+  country: string;
+  locOptions: string;
+  note: string;
+  region: string;
+  lat: number;
+  lng: number;
+  editRowIndex: number;
+  editStreet: string;
+  editCity: string;
+  editTitle: string;
+  editStateProv: string;
+  editZipCde: string;
+  editCountry: string;
+  editLocOptions: string;
+  editNote: string;
+  editRegion: string;
+  editLat: number;
+  editLng: number;
+  isReadOnly: boolean;
+  isTranslationMode: boolean;
+  lang: string;
+  translations: {};
+}

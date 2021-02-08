@@ -1,0 +1,95 @@
+<nav class="navbar navbar-expand-lg navbar-light m-0 p-2">
+  <h4>{{ getTranslation('Users') }}</h4>
+</nav>
+
+<div class="col-md-12 p-0 users-list">
+  <div class="control-wrapper">
+    <app-custom-search-box (onFilterFunc)="applyFilter($event)">
+    </app-custom-search-box>
+    <div class="active-bar d-flex">
+      <div class="input-group-append">
+        <label for="activeUser" [ngClass]="lang !== 'ar' ? 'mr-2' : 'ml-2'">{{ getTranslation('Only Active Users') }}</label>
+        <mat-checkbox
+          class="checkbox-margin mt-1"
+          color="primary"
+          id="isActiveUser"
+          name="isActiveUser"
+          (change)="handleCheckActiveUser($event)"
+        >
+        </mat-checkbox>
+      </div>
+    </div>
+
+    <div class="control-wrapper__right">
+      <button
+        type="button"
+        (click)="addUserDialog()"
+        class="btn bg-transparent navbar-brand"
+        data-toggle="modal"
+        data-target="#newEntry"
+      >
+        <i class="fas fa-plus-circle"></i
+        ><span class="h6" [ngClass]="lang !== 'ar' ? 'pl-2' : 'pr-2'">{{ getTranslation('New') }}</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="table-custom-responsive">
+    <table [ngClass]="lang === 'ar' && 'rtl'"
+      mat-table
+      class="users-lk-table mat-elevation-z8 table-strip"
+      [dataSource]="dataSource"
+      matSort
+    >
+      <ng-container class="custom-table-col" matColumnDef="position">
+        <th mat-header-cell *matHeaderCellDef>No</th>
+        <td mat-cell *matCellDef="let i = index">{{ paginator._pageIndex * paginator.pageSize + i + 1 }}</td>
+      </ng-container>
+      <ng-container matColumnDef="roles">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{ getTranslation('Role') }}
+        </th>
+        <td mat-cell *matCellDef="let rec">{{ arrayToString(rec.roles) }}</td>
+      </ng-container>
+      <ng-container matColumnDef="userEmail">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{ getTranslation('User Email') }}
+        </th>
+        <td mat-cell class="description-cell" *matCellDef="let rec">
+          {{ rec.userEmail }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="isActiveUser">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{ getTranslation('Active user') }}
+        </th>
+        <td mat-cell class="description-cell" *matCellDef="let rec">
+          {{ true == rec.isActive ? 'Yes' : 'No' }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="delete">
+        <th mat-header-cell class="text-center" *matHeaderCellDef>
+          {{ getTranslation('Delete') }}
+        </th>
+        <td
+          mat-cell
+          class="description-cell text-center"
+          *matCellDef="let rec"
+          (click)="rowClicked(rec, $event)"
+        >
+          <i class="fa fa-trash-alt"></i>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr
+        mat-row
+        *matRowDef="let row; let even = even; columns: displayedColumns"
+        [ngClass]="{ gray: even }"
+        (dblclick)="rowClicked(row, $event)"
+      ></tr>
+    </table>
+  </div>
+  <mat-paginator [ngClass]="lang === 'ar' && 'rtl'" [pageSize]="10" [pageSizeOptions]="[5, 10, 25]">
+  </mat-paginator>
+</div>

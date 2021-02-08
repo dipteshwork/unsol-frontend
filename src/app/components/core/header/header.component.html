@@ -1,0 +1,68 @@
+<div class="w-100 d-flex">
+  <nav class="navbar navbar-expand-lg mynavbar w-100">
+    <a routerLink="/home"
+      ><img src="../../../assets/img/un-logo-blue.png" class="my-banner" [ngClass]="{ 'rtl': appLang === 'ar' }"
+    /></a>
+
+    <div
+      *ngIf="isAuthenticated"
+      class="collapse navbar-collapse ml-auto h-100"
+      id="navbarSupportedContent"
+    >
+      <ul class="navbar-nav ml-5 h-100">
+        <nav class="header-tabs" mat-tab-nav-bar [disableRipple]="true">
+          <a
+            mat-tab-link
+            *ngIf="
+              userIsReadOnly ||
+              userIsOfficer ||
+              userIsSecretary ||
+              userIsSuperuser ||
+              userIsTranslator
+            "
+            [routerLink]="['../all-entries']"
+            routerLinkActive
+            #rla1="routerLinkActive"
+            [active]="index == '1'"
+            (click)="onChangeItem($event, '1')"
+          >
+            {{ getTranslation('Entry List') }}
+          </a>
+          <a
+            mat-tab-link
+            *ngIf="userIsSuperuser || userIsAdministrator"
+            [routerLink]="['../lookups']"
+            routerLinkActive
+            #rla2="routerLinkActive"
+            [active]="rla2.isActive"
+            (click)="onChangeItem($event, '2')"
+          >
+            {{ getTranslation('Lookups') }}
+          </a>
+          <a
+            mat-tab-link
+            *ngIf="userIsAdministrator"
+            [routerLink]="['../security']"
+            routerLinkActive
+            #rla3="routerLinkActive"
+            [active]="rla3.isActive"
+            (click)="onChangeItem($event, '3')"
+          >
+            {{ getTranslation('Management') }}
+          </a>
+        </nav>
+      </ul>
+
+      <ul class="navbar-nav" [ngClass]="appLang === 'ar' ? 'ml-5' : 'mr-5'">
+        <app-azure-user-box></app-azure-user-box>
+        <button mat-raised-button (click)="logout()" *ngIf="!fakeUser.enabled">Logout</button>
+      </ul>
+    </div>
+    <div
+      *ngIf="!isAuthenticated"
+      class="auth-btn-container"
+    >
+      <button mat-raised-button (click)="login()">Login</button>
+    </div>
+  </nav>
+</div>

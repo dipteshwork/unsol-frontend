@@ -1,0 +1,56 @@
+@import "./variables.scss";
+
+body {
+  background-color: #edf1f299;
+}
+/* ---------------------------------------------------
+    MODAL STYLE
+----------------------------------------------------- */
+.modal-container {
+  border-radius: 10px;
+}
+.modal-content {
+  border: none;
+  .modal-header {
+    .close {
+      min-width: 38px !important;
+    }
+  }
+  .modal-body {
+    padding: 1rem !important;
+    // height: 40vh;
+    overflow: auto;
+    &.rtl {
+      direction: rtl;
+      div {
+        direction: ltr;
+      }
+    }
+  }
+  .modal-footer {
+    padding: 16px 32px 24px 32px;
+    button {
+      background: $bg-primary;
+      width: 100%;
+      min-height: 44px;
+      min-width: 100px;
+      border-radius: 8px;
+      font-size: 16px;
+      border: 0;
+    }
+    .btn-secondary {
+      margin-right: 42px;
+      background: $text-primary;
+      color: $text-primary-dark;
+    }
+    .btn-secondary:active {
+      background: $bg-primary;
+    }
+  }
+}
+
+.mat-tooltip {
+  background: grey !important;
+  border-radius: 4px !important;
+  max-width: 400px !important;
+}

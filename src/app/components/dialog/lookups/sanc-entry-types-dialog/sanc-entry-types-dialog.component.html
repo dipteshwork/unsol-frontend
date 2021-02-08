@@ -1,0 +1,78 @@
+<form class="modal-container" [formGroup]="sancEntryTypForm" (ngSubmit)="onSubmit(sancEntryTypForm)">
+  <div class="modal-content">
+    <app-custom-modal-header
+      [modalTitle]="translations[appLang][data.title]"
+      [appLang]="appLang"
+    >
+    </app-custom-modal-header>
+
+    <div class="modal-body">
+      <div class="col-md-12">
+        <app-language-bar
+          (childChangeLangEvent)="changeLang($event)"
+          [lang]="lang"
+          [langArr]="langArr"
+        >
+        </app-language-bar>
+      </div>
+      <div class="row mt-3">
+        <div class="col-md-12">
+          <div *ngFor="let language of languageArr">
+            <mat-form-field
+              [ngClass]="appLang === 'ar' && 'rtl'"
+              *ngIf="language.acronym.toLowerCase() == lang"
+              appearance="outline"
+              class="col-md-12">
+              <mat-label for=EntryTypNm>{{ translations[appLang]['Entry type name'] }}</mat-label>
+              <input
+                matInput
+                [ngClass]="{'text-right': lang === 'ar'}"
+                [formControlName]="language.acronym + '_entryType'"
+                placeholder="{{ translations[appLang]['Please enter Entry Type'] }}"
+                [id]="language.acronym + 'lk_entryType'"
+              />
+            </mat-form-field>
+          </div>
+          <mat-form-field [ngClass]="appLang === 'ar' && 'rtl'" appearance="outline" class="col-md-12">
+            <mat-label for="prefix">{{translations[appLang]['Entry type prefix']}}</mat-label>
+            <input
+              matInput
+              [ngClass]="{'text-right': lang === 'ar'}"
+              formControlName="prefix"
+              placeholder="{{ translations[appLang]['Please enter prefix'] }}"
+              id="prefix"
+            />
+          </mat-form-field>
+
+          <div class="col-md-12 mb-3">
+            <mat-checkbox
+              id="isActive"
+              class="checkbox-margin"
+              formControlName="isActive"
+              color="primary"
+            >
+              {{ translations[appLang]['Active'] }}
+            </mat-checkbox>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer d-flex justify-content-between" [ngClass]="appLang === 'ar' && 'rtl'">
+      <button
+        type="button"
+        mat-button
+        mat-dialog-close
+        cdkFocusInitial
+        class="btn btn-secondary"
+        data-dismiss="modal"
+      >
+        {{ translations[appLang]['Cancel'] }}
+      </button>
+      <button type="submit" mat-button class="btn btn-primary">
+        {{ translations[appLang]['Save'] }}
+      </button>
+    </div>
+  </div>
+</form>

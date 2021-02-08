@@ -1,0 +1,108 @@
+<form [formGroup]="newEntryDialogform" (ngSubmit)="submit(newEntryDialogform)">
+  <div class="modal-content">
+    <app-custom-modal-header
+      [modalTitle]="data.translations[data.title]"
+      [appLang]="lang.toLowerCase()"
+    >
+    </app-custom-modal-header>
+
+    <div class="modal-body">
+      <div class="row mt-3">
+        <div class="col-md-12">
+
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>{{ data.translations['Entry type'] || 'Entry type'}}</mat-label>
+            <mat-select
+              [ngClass]="lang === 'AR' && 'rtl'"
+              formControlName="entryType"
+              name="entryType"
+              id="entryType"
+              required
+            >
+              <mat-option [ngClass]="lang === 'AR' && 'rtl'" value="Select Script">{{
+                data.translations['Select entry type']
+                }}</mat-option>
+              <mat-option
+                [ngClass]="lang === 'AR' && 'rtl'"
+                *ngFor="let tmp of getEntryTypeKeysArr()"
+                [value]="data.entryType[tmp]"
+              >
+                {{ data.entryType[tmp] }}
+              </mat-option>
+            </mat-select>
+            <div
+              *ngIf="isEntryTypeEmpty() && newEntryDialogSubmitted"
+              class="text-danger"
+            >
+              <strong>{{ data.translations['Required'] }}</strong>
+            </div>
+          </mat-form-field>
+
+<!--          <mat-form-field appearance="outline" class="w-100">-->
+<!--            <mat-label>{{ data.translations['Language'] }}</mat-label>-->
+<!--            <mat-select-->
+<!--              [ngClass]="lang === 'AR' && 'rtl'"-->
+<!--              formControlName="language"-->
+<!--              name="language"-->
+<!--              id="language"-->
+<!--            >-->
+<!--              <mat-option-->
+<!--                [ngClass]="lang === 'AR' && 'rtl'"-->
+<!--                *ngFor="let tmp of getLanguage()"-->
+<!--                [value]="tmp.acronym"-->
+<!--              >{{ tmp.name }}</mat-option-->
+<!--              >-->
+<!--            </mat-select>-->
+<!--            <div-->
+<!--              *ngIf="isLanguageEmpty() && newEntryDialogSubmitted"-->
+<!--              class="text-danger"-->
+<!--            >-->
+<!--              <strong>{{ data.translations['Required'] }}</strong>-->
+<!--            </div>-->
+<!--          </mat-form-field>-->
+
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>{{ data.translations['Regime'] }}</mat-label>
+            <mat-select
+              [ngClass]="lang === 'AR' && 'rtl'"
+              formControlName="regime"
+              name="regime"
+              id="regime"
+            >
+              <mat-option [ngClass]="lang === 'AR' && 'rtl'" value="Select Regime">{{
+                data.translations['Select Regime']
+                }}</mat-option>
+              <mat-option
+                [ngClass]="lang === 'AR' && 'rtl'"
+                *ngFor="let tmpScrpt of data.regime; let i = index"
+                value="{{ i }}--{{ getRegimeValue(tmpScrpt[this.lang]) }}"
+              >{{ getRegimeValue(tmpScrpt[this.lang]) }}
+              </mat-option>
+            </mat-select>
+            <div
+              *ngIf="isRegimeEmpty() && newEntryDialogSubmitted"
+              class="text-danger"
+            >
+              <strong>{{ data.translations['Required'] }}</strong>
+            </div>
+          </mat-form-field>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer d-flex justify-content-center" [ngClass]="lang === 'AR' && 'rtl'">
+      <button
+        type="button"
+        (click)="onNoClick()"
+        class="btn btn-secondary"
+        data-dismiss="modal"
+      >
+        {{ data.translations['Cancel'] }}
+      </button>
+      <button type="submit" class="btn btn-primary">
+        {{ data.translations['Create'] }}
+      </button>
+    </div>
+  </div>
+</form>

@@ -1,0 +1,112 @@
+<form [formGroup]="xmlJsonRptForm" (ngSubmit)="submit(xmlJsonRptForm)">
+  <div class="modal-content">
+    <app-custom-modal-header
+      [modalTitle]="data.title"
+    >
+    </app-custom-modal-header>
+
+    <div class="modal-body">
+      <div class="row">
+        <div class="col-md-12">
+          Select the option to download
+          <mat-radio-group
+            formControlName="chosenRptTyp"
+            class="xmljson-radio-group pl2"
+          >
+            <mat-radio-button
+              *ngIf="data.entryIds.length > 0"
+              value="1"
+              class="xmljson-radio-button"
+            >
+              <mat-label
+                >Selected records in JSON Format (enhanced data
+                model)</mat-label
+              >
+              <!--
+              <select  formControlName="discreteJsonControl">
+                <option required *ngFor="let iJson of discreteJson" [value]="iJson.value">
+                  {{iJson.viewValue}}
+                </option>
+              </select>
+              -->
+            </mat-radio-button>
+            <mat-radio-button
+              *ngIf="data.entryIds.length > 0"
+              value="3"
+              class="xmljson-radio-button"
+            >
+              <mat-label
+                >Selected records in XML Format (legacy data model)</mat-label
+              >
+              <!--
+              <select  formControlName="discreteXmlControl">
+                <option required *ngFor="let iXml of discreteXml" [value]="iXml.value">
+                  {{iXml.viewValue}}
+                </option>
+              </select>
+              -->
+            </mat-radio-button>
+            <mat-radio-button value="2" class="xmljson-radio-button">
+              <mat-label class="report-desc"
+                >Daily consolidated report in XML format (legacy data
+                model)</mat-label
+              >
+              <!-- formControlName="consolidatedXmlControl">
+                  <option>Consolidated report (ALL)</option>
+                  <option required *ngFor="let cXML of consolidatedXml" [value]="cXML.value">
+                    {{cXML.viewValue}}
+                  </option>
+                </select>
+              -->
+            </mat-radio-button>
+            <mat-radio-button value="4" class="xmljson-radio-button">
+              <mat-label class="report-desc">
+                Refresh reports and download consolidated report in XML Format
+                (legacy data model)</mat-label
+              >
+              <br />
+              <span class="smallTxt report-desc">
+                Note: This action takes place in the background and it might
+                take several minutes</span
+              >
+              <!--
+                <select  formControlName="prebuiltConsolRptControl">
+                <option required *ngFor="let cConsolXml of consolXml" [value]="cConsolXml.value">
+                  {{cConsolXml.viewValue}}
+                </option>
+              </select>-->
+            </mat-radio-button>
+          </mat-radio-group>
+
+          <mat-form-field appearance="outline">
+            <mat-label for="selectLanguage">{{ 'Select language:' }}</mat-label>
+            <mat-select
+              formControlName="chosenRptLang"
+              name="preferLanguage"
+              id="selectLanguage"
+            >
+              <mat-option
+                required
+                *ngFor="let lang of langs; let i = index"
+                [value]="lang.value"
+              >{{ lang.viewValue }}</mat-option
+              >
+            </mat-select>
+          </mat-form-field>
+
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer d-flex justify-content-center">
+      <button
+        type="button"
+        (click)="onNoClick()"
+        class="btn btn-secondary"
+        data-dismiss="modal"
+      >
+        Cancel
+      </button>
+      <button type="submit" class="btn btn-primary">Download</button>
+    </div>
+  </div>
+</form>

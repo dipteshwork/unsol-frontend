@@ -1,0 +1,60 @@
+.users-list {
+  height: calc(100% - 30px);
+  display: flex;
+  flex-direction: column;
+}
+
+.table-custom-responsive {
+  display: flex;
+  overflow: auto;
+  height: 100%;
+}
+
+table {
+  box-shadow: none;
+  &.rtl {
+    text-align: right;
+    .mat-header-cell {
+      text-align: right;
+    }
+  }
+}
+
+.mat-paginator {
+  &.rtl {
+    direction: ltr;
+    display: flex;
+  }
+}
+
+.users-action-bar {
+  .input-group {
+    margin-left: 20px;
+  }
+  .active-bar {
+    display: flex;
+    align-items: center;
+    .active-bar-checkbox {
+      margin-right: 10px;
+    }
+  }
+}
+.users-lk-table {
+  width: 100%;
+  .custom-table-col {
+    margin-right: 20px;
+  }
+
+  td.cdk-column-delete {
+
+    &:hover {
+      color: red !important;
+    }
+  }
+}
+
+::ng-deep .mat-dialog-container{
+  padding: 0 !important;
+  border-radius: 12px !important;
+}
+

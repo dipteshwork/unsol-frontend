@@ -1,0 +1,145 @@
+<form [formGroup]="editUserDialogform" (ngSubmit)="submit(editUserDialogform)">
+  <div class="modal-content">
+    <app-custom-modal-header
+      [modalTitle]="[getTranslation(data.title)]"
+      [appLang]="curLang.toLowerCase()"
+    >
+    </app-custom-modal-header>
+
+    <div class="modal-body">
+      <div class="row pt-3">
+        <div class="col-sm-6">
+          <mat-form-field appearance="outline" class="col-md-12" [ngClass]="curLang === 'AR' && 'rtl'">
+            <mat-label for="lk_userEmail">{{ getTranslation('User Email') }}</mat-label>
+            <input
+              matInput
+              formControlName="userEmail"
+              placeholder="{{ getTranslation('Please enter Email') }}"
+              id="lk_userEmail"
+            />
+          </mat-form-field>
+        </div>
+        <div class="col-sm-6">
+          <mat-form-field appearance="outline" class="col-md-12" [ngClass]="curLang === 'AR' && 'rtl'">
+            <mat-label for="lk_userName">{{ getTranslation('User Name') }}</mat-label>
+            <input
+              matInput
+              formControlName="userName"
+              placeholder="{{ getTranslation('Please enter Name') }}"
+              id="lk_userName"
+            />
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-6">
+          <mat-form-field appearance="outline" class="col-md-12" [ngClass]="curLang === 'AR' && 'rtl'">
+            <mat-label>{{ getTranslation('Preferred Language') }}</mat-label>
+            <mat-select
+              formControlName="preferLanguage"
+              name="preferLanguage"
+              id="preferLanguage"
+            >
+              <mat-option
+                *ngFor="let lang of langArr; let i = index"
+                [value]="lang.acronym"
+                >{{ lang.name }}</mat-option
+              >
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="col-sm-6">
+        </div>
+      </div>
+
+      <div
+        *ngIf="submitted && editUserDialogform.get('userEmail').errors"
+        class="validation-error"
+      >
+        <div *ngIf="editUserDialogform.get('userEmail').errors.required">
+          Email is required
+        </div>
+        <div *ngIf="editUserDialogform.get('userEmail').errors.email">
+          Email must be a valid email address
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-sm-6">
+          <div
+            *ngIf="editUserDialogform.get('userRoles') != undefined"
+            formArrayName="userRoles"
+            class="col-md-6"
+          >
+            <label for="rolesArr">{{ getTranslation('Roles') }}</label>
+            <div class="measure-section">
+              <div *ngFor="let userRole of rolesArr; let i = index">
+                <mat-checkbox
+                  class="checkbox-margin"
+                  [checked]="getChecked(userRole['roleName'])"
+                  (change)="
+                    updateChkbxArray(userRole['roleName'], $event.checked)
+                  "
+                  color="primary"
+                >
+                  {{ userRole['roleName'] }}
+                </mat-checkbox>
+              </div>
+            </div>
+            <div
+              *ngIf="submitted && editUserDialogform.controls.userRoles.errors"
+              class="validation-error"
+            >
+              <div
+                *ngIf="editUserDialogform.controls.userRoles.errors.required"
+              >
+                Role is required
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6" *ngIf="isUserHasRole('Translator')">
+          <label for="rolesArr">{{ getTranslation('Languages') }}</label>
+          <div>
+            <div *ngFor="let lang of langArr; let i = index">
+              <mat-checkbox
+                class="checkbox-margin"
+                [checked]="getCheckedLang(lang.acronym)"
+                (change)="updateLang(lang.acronym, $event.checked)"
+                color="primary"
+              >
+                {{ lang.name }}
+              </mat-checkbox>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-sm-6">
+          <div class="active-user">
+            <label for="activeUser" class="mr-2">{{ getTranslation('Active User') }}</label>
+            <mat-checkbox
+              class="checkbox-margin mt-1"
+              formControlName="isActiveUser"
+              color="primary"
+              id="activeUser"
+              name="activeUser"
+            >
+            </mat-checkbox>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer d-flex justify-content-center" [ngClass]="curLang === 'AR' && 'rtl'">
+      <button
+        type="button"
+        (click)="onNoClick()"
+        class="btn btn-secondary"
+        data-dismiss="modal"
+      >
+        {{ getTranslation('Cancel') }}
+      </button>
+      <button type="submit" class="btn btn-primary">{{ getTranslation('Save') }}</button>
+    </div>
+  </div>
+</form>

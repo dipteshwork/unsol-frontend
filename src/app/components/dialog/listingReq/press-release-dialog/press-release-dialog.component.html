@@ -1,0 +1,42 @@
+<!-- Modal Name-->
+<form class="modal-container" (ngSubmit)="submit()">
+  <div class="modal-content">
+    <app-custom-modal-header
+      [modalTitle]="translations[lang][data.title] || data.title"
+      [modalIcon]="data.isReadOnly"
+    >
+    </app-custom-modal-header>
+
+    <div class="modal-body">
+
+      <div class="row mt-3">
+        <div class="col-md-12">
+          <div appearance="outline" class="d-flex p-3">
+            <div>
+              <div [innerHTML]="pressReleaseItem"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="modal-footer">
+      <div class="d-flex justify-content-between">
+        <button
+          type="button"
+          (click)="onNoClick()"
+          class="btn btn-secondary"
+          data-dismiss="modal"
+        >
+          {{ translations[lang]['Cancel'] }}
+        </button>
+        <div *ngIf="!data.isReadOnly">
+          <button type="submit" class="btn btn-primary">
+            {{ translations[lang]['Save'] }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>

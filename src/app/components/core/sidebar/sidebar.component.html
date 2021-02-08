@@ -1,0 +1,111 @@
+<nav id="sidebar">
+  <div class="sidebar-collapse" [ngClass]="{ 'rtl': appLang === 'ar' }" (click)="onChangeCollapse()">
+    <i
+      class="fa"
+      [ngClass]="{
+        'fa-angle-double-left': (!collapsed && appLang !== 'ar') || (collapsed && appLang === 'ar'),
+        'fa-angle-double-right': (collapsed && appLang !== 'ar') || (!collapsed && appLang === 'ar')
+      }"
+    ></i>
+  </div>
+  <div class="w-100 sidebar-container" *ngIf="index == '1'">
+    <div>
+      <div class="sidebar-header">
+        <h3>
+          <span class="d-flex" [ngClass]="{ 'sidebar-collapsed': collapsed }">
+            {{ getTranslation('UNSOL List') }}</span
+          >
+        </h3>
+      </div>
+
+      <ul class="statusLinks list-unstyled components">
+        <li *ngFor="let link of entryNavLinks" class="status-link">
+          <a
+            href="#"
+            [routerLink]="link.path"
+            routerLinkActive
+            #rla="routerLinkActive"
+            [routerLinkActiveOptions]="{ exact: true }"
+            class="{{
+              rla.isActive
+                ? 'd-flex align-items-center true'
+                : 'd-flex align-items-center'
+            }}"
+          >
+            <i class="fa sidebar-icon mx-2 {{ link.icon }}" [ngClass]="link.icon"></i>
+            <span [ngClass]="{ 'sidebar-collapsed': collapsed }">
+              {{ getTranslation(link.name).toUpperCase() }}</span
+            >
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="w-100" *ngIf="index == '2'">
+    <div class="sidebar-header">
+      <h3>
+        <span class="d-flex" [ngClass]="{ 'sidebar-collapsed': collapsed }">
+          {{ getTranslation('Look UP') }}</span
+        >
+      </h3>
+    </div>
+
+    <ul class="statusLinks list-unstyled components">
+      <li *ngFor="let link of lookupNavLinks" class="status-link">
+        <a
+          href="#"
+          [routerLink]="link.path"
+          routerLinkActive
+          #rla="routerLinkActive"
+          [routerLinkActiveOptions]="{ exact: true }"
+          class="{{
+            rla.isActive
+              ? 'd-flex align-items-center true'
+              : 'd-flex align-items-center'
+          }}"
+        >
+          <img [src]="link.icon" class="sidebar-icon mx-2" />
+          <span [ngClass]="{ 'sidebar-collapsed': collapsed }">
+            {{ getTranslation(link.name).toUpperCase() }}</span
+          >
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <div class="w-100" *ngIf="index == '3'">
+    <div class="sidebar-header">
+      <h3>
+        <span class="d-flex" [ngClass]="{ 'sidebar-collapsed': collapsed }">
+          {{ getTranslation('Security') }}</span
+        >
+      </h3>
+    </div>
+
+    <ul class="statusLinks list-unstyled components">
+      <li *ngFor="let link of securityNavLinks" class="status-link">
+        <a
+          href="#"
+          [routerLink]="link.path"
+          routerLinkActive
+          #rla="routerLinkActive"
+          [routerLinkActiveOptions]="{ exact: false }"
+          class="{{
+            rla.isActive
+              ? 'd-flex align-items-center true'
+              : 'd-flex align-items-center'
+          }}"
+        >
+          <img [src]="link.icon" class="sidebar-icon mx-2" />
+          <span [ngClass]="{ 'sidebar-collapsed': collapsed }">
+            {{ getTranslation(link.name).toUpperCase() }}</span
+          >
+        </a>
+      </li>
+    </ul>
+  </div>
+  <div class="version-number">
+    <span *ngIf="!collapsed">UNSOL v{{ environment.version }}</span>
+  </div>
+</nav>

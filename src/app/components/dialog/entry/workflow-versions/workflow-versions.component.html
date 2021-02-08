@@ -1,0 +1,195 @@
+<div class="modal-content">
+  <app-custom-modal-header
+    [modalTitle]="translations[lang][data.title] || data.title"
+  >
+  </app-custom-modal-header>
+
+  <div class="modal-body">
+    <div class="card-body p-0">
+      <label *ngIf="data.entryStatus !== STATUS_ACTIVE && activeData !== null" class="identityLabel" (click)="getActiveRecordDetails(activeData)">
+        <i class="fas fa-hashtag text-primary"></i>
+        {{ translations[lang]['Active Version'] }}: <span class="active-version-link text-primary">{{ activeData.version }}</span>
+      </label>
+      <label *ngIf="data.entryStatus === STATUS_ACTIVE" class="identityLabel">This is the active version of the entry.</label>
+    </div>
+    <div class="card-body row p-0">
+      <div class="col-sm-6 p-2">
+        <div class="col-sm-12 p-2">
+          <label class="identityLabel"
+            ><i class="fas fa-hashtag text-primary"></i
+            >{{ translations[lang]['Versions'] }}</label
+          >
+          <div class="overflow-auto">
+            <table
+              mat-table
+              [dataSource]="versionHistoryDataSrc"
+              class="mat-elevation-z8 table"
+            >
+              <ng-container matColumnDef="version">
+                <th mat-header-cell *matHeaderCellDef>
+                  {{ translations[lang]['Version'] }}#
+                </th>
+                <td mat-cell *matCellDef="let element; let i = index">
+                  <a>{{
+                    element.version
+                  }}</a>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="entryId">
+                <th mat-header-cell *matHeaderCellDef>
+                  {{ translations[lang]['EntryId'] }}
+                </th>
+                <td mat-cell *matCellDef="let element">
+                  {{ element.entryId }}
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="amendmentId">
+                <th mat-header-cell *matHeaderCellDef>
+                  {{ translations[lang]['Amendment Id'] }}
+                </th>
+                <td mat-cell *matCellDef="let element">
+                  {{ element.amendmentId }}
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="status">
+                <th mat-header-cell *matHeaderCellDef>
+                  {{ translations[lang]['Status'] }}
+                </th>
+                <td mat-cell *matCellDef="let element">{{ element.status }}</td>
+              </ng-container>
+              <ng-container matColumnDef="modifiedDte">
+                <th mat-header-cell *matHeaderCellDef>
+                  {{ translations[lang]['Modified'] }}
+                </th>
+                <td mat-cell *matCellDef="let element">
+                  {{ element.modifiedDte }}
+                </td>
+              </ng-container>
+              <tr
+                mat-header-row
+                *matHeaderRowDef="versionHistDisplayedColumns"
+              ></tr>
+              <tr
+                mat-row
+                *matRowDef="let row; columns: versionHistDisplayedColumns"
+              ></tr>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-6 p-2">
+        <!-- two tables here  - three column table -->
+        <div class="col-sm-12 p-2">
+          <label class="identityLabel"
+            ><i class="fas fa-hashtag text-primary"></i
+            >{{ translations[lang]['Ongoing amendments'] }}</label
+          >
+          <table
+            mat-table
+            [dataSource]="ongoingAmendmentsDataSrc"
+            class="mat-elevation-z8 table"
+          >
+            <ng-container matColumnDef="version">
+              <th mat-header-cell *matHeaderCellDef>
+                {{ translations[lang]['Version'] }}#
+              </th>
+              <td mat-cell *matCellDef="let element; let i = index">
+                <a class="btn-view-version" (click)="getOngoingAmendmentRecord(i)">{{
+                  element.version
+                }}</a>
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="entryId">
+              <th mat-header-cell *matHeaderCellDef>
+                {{ translations[lang]['EntryId'] }}
+              </th>
+              <td mat-cell *matCellDef="let element">{{ element.entryId }}</td>
+            </ng-container>
+            <ng-container matColumnDef="amendmentId">
+              <th mat-header-cell *matHeaderCellDef>
+                {{ translations[lang]['Amendment Id'] }}
+              </th>
+              <td mat-cell *matCellDef="let element">
+                {{ element.amendmentId }}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="status">
+              <th mat-header-cell *matHeaderCellDef>
+                {{ translations[lang]['Status'] }}
+              </th>
+              <td mat-cell *matCellDef="let element">{{ element.status }}</td>
+            </ng-container>
+            <ng-container matColumnDef="modifiedDte">
+              <th mat-header-cell *matHeaderCellDef>
+                {{ translations[lang]['Modified'] }}
+              </th>
+              <td mat-cell *matCellDef="let element">
+                {{ element.modifiedDte }}
+              </td>
+            </ng-container>
+            <tr
+              mat-header-row
+              *matHeaderRowDef="ongoingAmendmentsDisplayedColumns"
+            ></tr>
+            <tr
+              mat-row
+              *matRowDef="let row; columns: ongoingAmendmentsDisplayedColumns"
+            ></tr>
+          </table>
+        </div>
+        <div class="col-sm-12 p-2">
+          <label class="identityLabel"
+            ><i class="fas fa-hashtag text-primary"></i
+            >{{ translations[lang]['Superseded Versions'] }}</label
+          >
+          <table
+            mat-table
+            [dataSource]="supersededversDataSrc"
+            class="mat-elevation-z8 table"
+          >
+            <ng-container matColumnDef="version">
+              <th mat-header-cell *matHeaderCellDef>
+                {{ translations[lang]['Version'] }} #
+              </th>
+              <td mat-cell *matCellDef="let element; let i = index">
+                <a class="btn-view-version" (click)="getSupsersededRecord(i)">{{ element.version }}</a>
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="status">
+              <th mat-header-cell *matHeaderCellDef>
+                {{ translations[lang]['Status'] }}
+              </th>
+              <td mat-cell *matCellDef="let element">{{ element.status }}</td>
+            </ng-container>
+            <ng-container matColumnDef="modifiedDte">
+              <th mat-header-cell *matHeaderCellDef>
+                {{ translations[lang]['Modified'] }}
+              </th>
+              <td mat-cell *matCellDef="let element">
+                {{ element.modifiedDte }}
+              </td>
+            </ng-container>
+            <tr
+              mat-header-row
+              *matHeaderRowDef="supersededversDisplayedColumns"
+            ></tr>
+            <tr
+              mat-row
+              *matRowDef="let row; columns: supersededversDisplayedColumns"
+            ></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer d-flex justify-content-end">
+    <button
+      type="button"
+      (click)="closeDialog()"
+      class="btn btn-secondary w-120p"
+      data-dismiss="modal"
+    >
+      {{ translations[lang]['Close'] }}
+    </button>
+  </div>
+</div>

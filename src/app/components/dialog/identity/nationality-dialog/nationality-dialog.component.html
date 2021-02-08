@@ -1,0 +1,79 @@
+<form
+  [formGroup]="nationalttyDialogForm"
+  (ngSubmit)="submit(nationalttyDialogForm)"
+>
+  <div class="modal-content">
+    <app-custom-modal-header
+      [modalTitle]="translations[lang][data.title]"
+    >
+    </app-custom-modal-header>
+
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="col-sm-12">
+          <mat-form-field appearance="outline">
+            <mat-label>{{
+              translations[lang]['Choose nationality'] || 'Choose nationality'
+              }}</mat-label>
+            <mat-select
+              [disabled]="data.isReadOnly || data.isTranslationMode"
+              formControlName="nation"
+              required
+              name="nation"
+              id="nation"
+            >
+              <mat-option [disabled]="data.isReadOnly">{{
+                translations[lang]['Select country'] || 'Select country'
+                }}</mat-option>
+              <mat-option
+                [disabled]="
+                data.isReadOnly || data['alreadyChosen'].includes(tmp.UN_name)
+              "
+                *ngFor="let tmp of data.cntry"
+                [value]="tmp.UN_name"
+              >{{ tmp.Short_name }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <div *ngIf="isInvalid">
+            <strong style="color: red;">{{
+              translations[lang]['Please fill out all fields']
+              }}</strong>
+          </div>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="col-sm-12">
+          <mat-form-field appearance="outline">
+            <mat-label>{{ translations[lang]['Note'] }}</mat-label>
+            <input
+              matInput
+              [ngClass]="{'text-right': lang.toLocaleLowerCase() == 'ar'}"
+              [readonly]="data.isReadOnly"
+              formControlName="nationalNote"
+              id="nationalNote"
+            />
+          </mat-form-field>
+        </div>
+
+      </div>
+    </div>
+    <div class="modal-footer d-flex justify-content-center">
+      <div class="d-flex justify-content-between">
+        <button
+          type="button"
+          (click)="onNoClick()"
+          class="btn btn-secondary"
+          data-dismiss="modal"
+        >
+          {{ translations[lang]['Cancel'] }}
+        </button>
+        <div *ngIf="!data.isReadOnly">
+          <button type="submit" class="btn btn-primary">
+            {{ translations[lang]['Save'] }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>

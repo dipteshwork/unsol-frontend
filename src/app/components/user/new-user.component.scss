@@ -1,0 +1,425 @@
+@import "../../../styles/variables.scss";
+
+.new-user-form {
+  min-height: 64vh;
+}
+.mat-tab-label-active {
+  background-color: #e7e7e7;
+  color: #4d4d4d;
+  font-weight: bold;
+  opacity: 1 !important;
+}
+.mat-tooltip {
+  background-color: red;
+  font-size: 14px;
+}
+table {
+  width: 100%;
+}
+.mat-header-cell {
+  color: black;
+  font-weight: bold;
+  background-color: #e7e7e7;
+  padding: 5px !important;
+}
+
+.mat-cell {
+  color: black;
+  padding: 5px !important;
+}
+
+.lastColumn {
+  text-align: right !important;
+}
+
+.example-tab-icon {
+  margin-right: 8px;
+}
+
+div a:active,
+div a:selected {
+  background-color: red;
+}
+
+.active-link {
+  background-color: red;
+}
+
+.search-result {
+  align-items: center;
+  input {
+    flex: none !important;
+    width: 18% !important;
+    outline: none;
+    text-align: center;
+  }
+  span {
+    margin: 0 10px;
+  }
+}
+
+.entry-header {
+  direction: ltr;
+  position: sticky;
+  z-index: 2;
+  top: 90px;
+  background-color: white;
+
+  .buttons-wrapper {
+    display: flex;
+    justify-content: flex-end;
+    .close-button {
+      margin-bottom: 9px;
+      width: 30px !important;
+      height: 30px !important;
+      background: #02679d66;
+      border-radius: 50%;
+      color: $white;
+      border: 0;
+      font-size: 16px;
+    }
+    .close-button:hover {
+      background: $bg-secondary;
+    }
+    .close-button:focus {
+      background: $bg-secondary;
+      outline: none;
+    }
+  }
+
+  .lang-bar {
+    width: 100%;
+    margin: 0;
+    padding: 10px 24px;
+    margin-bottom: 48px;
+    display: flex;
+    align-items: center;
+    border-radius: 10px;
+    background: $bg-primary-10;
+    color: $text-primary-dark;
+    font-size: 14px;
+
+    &__left {
+      margin-right: 40px;
+      display: flex;
+      align-items: center;
+      font-weight: bold;
+
+      & > span:first-child {
+        margin-right: 16px;
+      }
+    }
+    &__official {
+      margin-right: 26px;
+
+      & > a.lang-item {
+        cursor: pointer;
+        background-color: $white;
+        color: $text-dark-40;
+        margin-right: 1px;
+        padding: 6px 16px;
+
+        &.working {
+          color: $text-success;
+          font-weight: bold;
+        }
+        &.active {
+          color: $white;
+          background-color: $text-primary;
+        }
+        &:first-child {
+          border-top-left-radius: 4px;
+          border-bottom-left-radius: 4px;
+        }
+        &:last-child {
+          border-top-right-radius: 4px;
+          border-bottom-right-radius: 4px;
+        }
+        &.disabled {
+          cursor: not-allowed;
+        }
+        i {
+          color: $text-success;
+          position: relative;
+          top: -5px;
+          left: -3px;
+        }
+      }
+    }
+    &__other {
+      button {
+        font-weight: bold;
+        i {
+          margin-left: 15px;
+          color: $black;
+        }
+        &:disabled {
+          cursor: not-allowed;
+        }
+      }
+    }
+  }
+
+  .name-bar {
+    padding: 0;
+    margin-bottom: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    &__left {
+      display: flex;
+      align-items: center;
+
+      .icon-wrapper {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        color: $text-primary-dark;
+        background-color: $bg-grey;
+        margin-right: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        i {
+          padding: 0;
+          font-size: 26px;
+        }
+      }
+      .name-wrapper {
+        .entry-title {
+          color: $text-dark;
+          font-size: 24px;
+          font-weight: bold;
+          margin-bottom: 5px;
+        }
+        .entry-ref {
+          color: $text-primary-dark;
+          background-color: $bg-secondary-10;
+          border-radius: 50px;
+          padding: 2px 15px;
+          font-size: 12px;
+          font-weight: bold;
+          margin-left: 14px;
+        }
+      }
+    }
+    &__right {
+      .badge-status {
+        border-radius: 50px;
+        background-color: $bg-success;
+        color: $white;
+        padding: 2px 10px 4px;
+        font-size: 12px;
+      }
+    }
+  }
+
+  .entry-tool-bar {
+    background-color: $bg-secondary-10;
+    color: $text-dark;
+    font-size: 12px;
+    padding: 10px 30px;
+    border-radius: 8px;
+
+    .navbar-brand {
+      font-size: 12px;
+      box-shadow: none;
+      border-right: solid 1px $border-dark-20;
+      border-radius: 0;
+      padding: 0 10px;
+    }
+  }
+}
+
+.mat-menu-content {
+  i {
+    color: $text-success;
+    position: relative;
+    top: -5px;
+    left: -3px;
+  }
+  .working {
+    color: $text-success;
+    font-weight: bold;
+  }
+}
+
+.entry-body {
+  direction: ltr;
+  .entry-tabs {
+    mat-tab-header {
+      padding: 0 30px;
+
+      .mat-tab-label {
+        color: $text-dark-30;
+        padding: 36px 4px;
+        font-size: 16px;
+        margin-right: 40px;
+      }
+      .mat-tab-label-active {
+        background-color: $white;
+        color: $text-dark;
+      }
+    }
+    .mat-tab-body-wrapper {
+      padding: 2rem 0;
+    }
+  }
+  .info-panel {
+    background: #F8FAFB;
+    border-radius: 8px;
+    padding: 1.5rem;
+    height: 100%;
+
+    & > .row {
+      margin-bottom: 1rem;
+    }
+    .info-label {
+      color: $text-dark;
+      opacity: 0.6;
+      font: Medium 16px/21px Roboto;
+    }
+    .info-value {
+      color: $text-dark;
+      font: Medium 16px/21px Roboto;
+    }
+    .info-notes {
+      background: white;
+      border-radius: 8px;
+      color: $text-dark;
+      font: Medium 14px/19px Roboto;
+      padding: 1rem;
+    }
+  }
+  .activity-notes {
+    margin-top: 4rem;
+
+    &__label {
+      color: $text-dark;
+      font-size: 16px;
+      font: 'Regular 24px/32px Roboto';
+    }
+    &__body {
+      font: 'Medium 16px/21px Roboto';
+      border: 1px solid $border-dark-10;
+      border-radius: 4px;
+      padding: 20px;
+      font-size: 14px;
+      color: $text-dark;
+      margin-bottom: 0.5rem;
+    }
+  }
+  .member-states-confidential {
+    color: $text-dark;
+    opacity: 0.6;
+    font-weight: bold;
+    font-size: 14px;
+    margin-top: 2.5rem;
+  }
+  mat-form-field {
+    width: 100%;
+  }
+}
+
+.mat-checkbox-checked.mat-accent .mat-checkbox-background {
+  background-color: $bg-primary;
+}
+.mat-checkbox .mat-checkbox-label {
+  color: $text-dark;
+  opacity: 0.6;
+  font-size: 14px;
+}
+.mat-dialog-container{
+  padding: 0 !important;
+  border-radius: 12px !important;
+}
+.btn-add-tab {
+  position: absolute;
+  right: 0;
+  z-index: 3;
+  border: 1px solid #707070;
+  border-radius: 4px;
+
+  .btn-label {
+    margin-left: 4px;
+  }
+}
+.identity-tab-wrapper {
+  mat-tab-header {
+    border: none;
+
+    .mat-tab-label {
+      padding: 20px 60px !important;
+    }
+    .mat-tab-label-active {
+      border: 1px solid #2222221A;
+      border-bottom: 3px solid #27AAE1;
+      border-top-left-radius: 10px;
+      border-top-right-radius: 10px;
+    }
+  }
+  .mat-tab-body-wrapper {
+    background: #FEFEFE 0% 0% no-repeat padding-box;
+    border: 1px solid #2222221A;
+    border-radius: 10px;
+  }
+  .mat-tab-labels {
+    display: block;
+  }
+  .mat-ink-bar {
+    display: none;
+  }
+}
+
+.mat-tab-body-content {
+  overflow: hidden !important;
+}
+.available-date-container {
+  .mat-form-field-infix {
+    padding: 8px 0;
+  }
+}
+.reltedLst-container {
+  margin-top: 4px;
+  min-height: 42px;
+  input {
+    height: 42px;
+  }
+}
+.spinner-container {
+  margin-top: 7rem;
+  display: flex;
+  justify-content: center;
+  height: 100%;
+  align-items: center;
+}
+.mat-progress-spinner.mat-warn circle, .mat-spinner.mat-warn circle {
+  stroke: #02679d;
+}
+
+.fa-plus {
+  cursor: pointer !important;
+}
+
+.cursor-pointer {
+  cursor: pointer !important;
+}
+
+.mat-form-field {
+  .mat-form-field-flex {
+    align-items: center;
+  }
+}
+
+.release-btn {
+  color: blue;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+::ng-deep .mat-dialog-container{
+  padding: 0 !important;
+  border-radius: 12px !important;
+}

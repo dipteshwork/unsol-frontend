@@ -1,0 +1,86 @@
+<nav class="navbar navbar-expand-lg navbar-light m-0 p-2">
+  <h4>{{ getTranslation('Measures') }}</h4>
+</nav>
+
+<div class="col-md-12 p-0 measures">
+  <div class="control-wrapper">
+    <app-custom-search-box (onFilterFunc)="applyFilter($event)">
+    </app-custom-search-box>
+
+    <div class="control-wrapper__right">
+      <button
+        type="button"
+        (click)="addMeasuresDialog()"
+        class="btn bg-transparent navbar-brand"
+        data-toggle="modal"
+        data-target="#newEntry"
+      >
+        <i class="fas fa-plus-circle"></i
+        ><span class="h6" [ngClass]="appLang !== 'ar' ? 'pl-2' : 'pr-2'">{{ getTranslation('Create New') }}</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="table-custom-responsive">
+    <table [ngClass]="appLang === 'ar' && 'rtl'"
+      mat-table
+      class="mat-elevation-z8 table-strip"
+      [dataSource]="dataSource"
+      matSort
+    >
+      <ng-container matColumnDef="position">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          No
+        </th>
+        <td mat-cell *matCellDef="let element; let i = index">{{ paginator._pageIndex * paginator.pageSize + i + 1 }}</td>
+      </ng-container>
+      <ng-container matColumnDef="measureName">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{ getTranslation('Name') }}
+        </th>
+        <td mat-cell *matCellDef="let rec">
+          {{ getTranslation(rec.measureNm) }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="measureStatus">
+        <th mat-header-cell *matHeaderCellDef>
+          {{ getTranslation('Status') }}
+        </th>
+        <td mat-cell *matCellDef="let rec">
+          {{ rec.isActive ? 'Active' : 'InActive' }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="edit">
+        <th mat-header-cell *matHeaderCellDef>{{ getTranslation('Edit') }}</th>
+        <td mat-cell *matCellDef="let rec">
+          <i
+            class="fa fa-edit table-icon"
+            aria-hidden="true"
+            title="Edit"
+            (click)="rowClicked(rec)"
+          ></i>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="delete">
+        <th mat-header-cell *matHeaderCellDef>{{ getTranslation('Delete') }}</th>
+        <td mat-cell *matCellDef="let element; let i = index">
+          <i
+            class="fa fa-trash table-icon"
+            aria-hidden="true"
+            title="Delete"
+            (click)="deleteMeasuresDialog(i, null)"
+          ></i>
+        </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr
+        mat-row
+        *matRowDef="let row; let even = even; columns: displayedColumns"
+        [ngClass]="{ gray: even }"
+        (dblclick)="rowClicked(row)"
+      ></tr>
+    </table>
+  </div>
+  <mat-paginator [ngClass]="appLang === 'ar' && 'rtl'" [pageSize]="10" [pageSizeOptions]="[5, 10, 25]">
+  </mat-paginator>
+</div>
